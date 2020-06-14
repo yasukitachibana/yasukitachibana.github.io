@@ -442,7 +442,35 @@
                 </div>
 
                 
-
+                <div id="accordion" role="tablist" aria-multiselectable="true" class="col-lg-8 col-lg-offset-2">
+                    <div class="card">
+                        <div class="card-header" role="tab" id="headingSix">
+                            <h5 class="mb-0">
+                                <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
+                                    <h3>
+                                        <i class="fa fa-chevron-down"></i> <!-- <span class="light">Start</span> Bootstrap -->
+                                        Image Magick
+                                    </h3>
+                                </a>
+                            </h5>
+                        </div>
+                        <div id="collapseSix" class="collapse col-lg-offset-1" role="tabpanel" aria-labelledby="headingSix">
+                            <div class="card-block">
+                              <p>
+				
+				Red(#ff0000) -> Green(#00ff00)<br>
+				$ convert -fuzz 50% -fill '#00ff00' -opaque '#ff0000' original.png copy.png
+				<br>
+				<br>				
+				White -> Transparent<br>
+				  $ convert original.png -fuzz 10% -transparent white transparent.png
+				  
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
                 
                 
 
