@@ -1,0 +1,8 @@
+.suggestion.label.radius{
+  /* background: #adaba5; */
+  background: rgba(173, 171, 165, 0.78);
+  color: #fff;
+  padding: 5px 10px;
+  font-weight:700;
+  border-radius:2px;
+}
