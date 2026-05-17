@@ -88,14 +88,13 @@
 <body>
 
 <header>
-  <h1>Determining Motion <span style="font-weight:normal;color:var(--muted);font-size:0.7em;">(in Classical Mechanics)</span>
-    <span class="jp">古典力学 — 運動を決定する</span>
+  <h1>Determining Motion <span style="font-weight:normal;color:var(--muted);font-size:0.7em;">[in Classical Mechanics (古典力学)]</span>
   </h1>
-  <div class="meta">IGS 200 &nbsp;·&nbsp; Tachibana (GC)</div>
+  <div class="meta">IGS 200 &nbsp;·&nbsp;AY2026 Spring&nbsp;·&nbsp; Tachibana (GC)</div>
 </header>
 
 <!-- ============================================================ -->
-<h2>1. The Question</h2>
+<h2>The Question</h2>
 
 <div class="box">
   When can we say
@@ -104,6 +103,9 @@
     <li>a given motion is <em>completely known</em>? <span class="jp">(与えられた運動を完全に知る)</span></li>
   </ul>
 </div>
+
+<!-- ============================================================ -->
+<h2>Determining Motion</h2>
 
 <h3>Setup: motions of <span class="underline">a point</span> <span class="jp">(点)</span></h3>
 
@@ -144,8 +146,7 @@
   </svg>
 </figure>
 
-<!-- ============================================================ -->
-<h2>2. Focus on one-dimensional motions <span class="jp">(1次元)</span></h2>
+
 
 <p>The position changes along a line. If we lay out time horizontally, the same motion becomes a curve in the <span class="lbl-math">(t, x)</span>-plane:</p>
 
@@ -212,7 +213,7 @@
 <hr class="soft">
 
 <!-- ============================================================ -->
-<h2>3. Speed and Velocity <span class="jp">(速さ・速度)</span></h2>
+<h2>Velocity <span class="jp">(速度)</span></h2>
 
 <p>Can \(x(t)\) tell the speed or velocity of the motion?</p>
 <p><span class="yesbox">Yes!</span> But how?</p>
@@ -255,8 +256,7 @@
   The slope <span class="jp">(傾き)</span> of the line equals the velocity \(v\).
 </div>
 
-<!-- ============================================================ -->
-<h2>4. The general case → derivative</h2>
+
 
 <p>For a non-linear curve, the velocity changes over time. Zoom in on a small interval near time \(t\): the curve is well-approximated by the chord from \( (t, x(t)) \) to \( (t+\Delta t,\; x(t+\Delta t)) \).</p>
 
@@ -337,8 +337,7 @@
   Take the limit &nbsp; \(\boxed{\;\Delta t \to 0\;}\) &nbsp; to recover the curve exactly.
 </div>
 
-<!-- ============================================================ -->
-<h2>5. The derivative — true velocity</h2>
+
 
 <p>In the limit, the chord becomes the <em>tangent line</em> <span class="jp">(接線)</span>, whose slope is the instantaneous velocity:</p>
 
@@ -358,24 +357,25 @@
 
 \[
   \boxed{\;v(t) \;=\; \lim_{\Delta t \to 0}\frac{x(t+\Delta t) - x(t)}{\Delta t}
-            \;=\; \frac{dx(t)}{dt} \;=\; \dot{x}(t)\;}
+            \;=\; \frac{dx(t)}{dt} \;=\; x'(t)\;}
 \]
 
 <p style="text-align:center;"><span class="lbl-sm">derivative of \(x\) &nbsp;<span class="jp">(微分)</span></span></p>
 
 <p>This is <em>defined</em> as the <span class="underline">true</span> velocity of the motion.</p>
 
-<!-- ============================================================ -->
-<h2>6. Summary &amp; Example (derivative)</h2>
 
+<h3>Summary</h3>
+<div class="box" style="text-align:left;">
 <ul>
-  <li>Velocity is the derivative of \(x(t)\) <span class="jp">(微分)</span>.</li>
+  <li>Velocity is the derivative of \(x(t)\) <span class="jp">(微分)</span>, thus</li>
   <li>Velocity can be obtained from \(x(t)\) by differentiation.</li>
 </ul>
 
 \[
   v(t) \;=\; \frac{dx(t)}{dt} \;=\; \lim_{\Delta t \to 0}\frac{x(t+\Delta t) - x(t)}{\Delta t}
 \]
+</div>
 
 <h3>Example</h3>
 <p>Let \(x(t) = (t-1)^2 - 1\). Find the velocity at \(t = \tfrac{5}{2}\).</p>
@@ -412,7 +412,7 @@
 <!-- ============================================================ -->
 <h2>7. From velocity back to position</h2>
 
-<p>Velocity is obtained by differentiating \(x(t)\). Can we recover \(x(t)\) from the velocity \(v(t)\)?</p>
+<p>Velocity is obtained by differentiating \(x(t)\). Can we recover \(x(t)\) from the functional form ofvelocity \(v(t)\)?</p>
 
 <p>▶ Integration is the inverse operation of differentiation <span class="jp">(積分 — 微分の逆操作)</span>:</p>
 
@@ -454,8 +454,8 @@ To know the location \(x(b)\) itself, you still need to know \(x(a)\):</p>
 \]
 
 <!-- ============================================================ -->
-<h2>8. Summary &amp; Example (integral)</h2>
-
+<h3>Summary</h3>
+<div class="box" style="text-align:left;">
 <ul>
   <li>Displacement is the integral of \(v(t)\).</li>
   <li>To determine the <em>location</em>, knowing the velocity \(v(t)\) is <strong>not enough</strong> — you also need an initial position.</li>
@@ -464,6 +464,7 @@ To know the location \(x(b)\) itself, you still need to know \(x(a)\):</p>
 \[
   x(b) - x(a) \;=\; \int_{a}^{b} v(t)\,dt
 \]
+</div>
 
 <h3>Example</h3>
 <p>Given \(v(t) = 2(t-1)\) and \(\boxed{\,x(1) = -1\,}\), find \(x(t=2)\).</p>
