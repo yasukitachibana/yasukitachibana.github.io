@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Determining Motion (in Classical Mechanics)</title>
+<script>
+  MathJax = {
+    tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] },
+    svg:  { fontCache: 'global' }
+  };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+  :root {
+    --text:#1a1a1a; --muted:#666; --jp:#555;
+    --bg:#fafafa; --card:#ffffff; --border:#dcdcdc;
+    --accent:#1f4e8a; --accent2:#c0392b; --accent3:#2a8a3e;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: "Georgia","Cambria","Times New Roman","Hiragino Mincho ProN","Yu Mincho",serif;
+    max-width: 780px; margin: 0 auto; padding: 48px 28px 80px;
+    line-height: 1.65; color: var(--text); background: var(--bg);
+  }
+  header { border-bottom: 2px solid var(--text); margin-bottom: 28px; padding-bottom: 12px; }
+  h1 { font-size: 28px; margin: 0 0 4px; }
+  h1 .jp { display: block; font-size: 16px; color: var(--jp); font-style: italic; margin-top: 4px; font-weight: normal; }
+  header .meta { color: var(--muted); font-size: 14.5px; margin-top: 6px; }
+  h2 {
+    font-size: 22px; margin: 40px 0 12px;
+    border-left: 5px solid var(--accent); padding-left: 12px;
+  }
+  h3 { font-size: 17px; margin: 26px 0 8px; color: var(--accent); }
+  p { margin: 10px 0; }
+  .jp { color: var(--jp); font-style: italic; font-size: 0.92em; }
+  .box {
+    border: 1.5px solid var(--text); padding: 14px 18px; margin: 16px 0;
+    background: var(--card); border-radius: 4px;
+  }
+  .recap {
+    background: #f4f7fb; border: 1px solid #c8d6e8; border-radius: 6px;
+    padding: 14px 18px; margin: 16px 0;
+  }
+  .recap ul { margin: 6px 0; padding-left: 22px; }
+  .recap li { margin: 4px 0; }
+  figure { margin: 18px auto; text-align: center; }
+  figcaption { font-size: 12.5px; color: var(--muted); margin-top: 4px; }
+  svg { max-width: 100%; height: auto; }
+  .underline { text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 3px; }
+  hr.soft { border: none; border-top: 1px dashed #bbb; margin: 30px 0; }
+  /* SVG styling */
+  .axis      { stroke: #222; stroke-width: 1.2; fill: none; }
+  .ground    { stroke: #444; stroke-width: 1.5; fill: none; }
+  .curve     { stroke: var(--accent); stroke-width: 2.2; fill: none; }
+  .curve2    { stroke: var(--accent2); stroke-width: 2; fill: none; }
+  .curve3    { stroke: var(--accent3); stroke-width: 2; fill: none; }
+  .guide     { stroke: #888; stroke-width: 1; stroke-dasharray: 4 3; fill: none; }
+  .pt        { fill: var(--accent2); }
+  .lbl       { font: 13px Georgia, serif; fill: #1a1a1a; }
+  .lbl-jp    { font: 12px "Hiragino Mincho ProN","Yu Mincho",serif; fill: #555; font-style: italic; }
+  .lbl-sm    { font: 11.5px Georgia, serif; fill: #555; }
+  .lbl-math  { font: italic 14px "Cambria","Times New Roman",serif; fill: #1a1a1a; }
+  .lbl-eq    { font: italic 12.5px "Cambria","Times New Roman",serif; fill: #222; }
+  .lbl-eq-sm { font: italic 11.5px "Cambria","Times New Roman",serif; fill: #444; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Determining Motion II <span style="font-weight:normal;color:var(--muted);font-size:0.7em;">[in Classical Mechanics (古典力学)]</span>
+  </h1>
+  <div class="meta">IGS 200 &nbsp;·&nbsp;AY2026 Spring&nbsp;·&nbsp; Tachibana (GC)</div>
+</header>
+
+<!-- ============================================================ -->
+<h2>1. Review <span class="jp">(復習)</span></h2>
+
+<div class="recap">
+  <ul>
+    <li><strong>Determining motion</strong> = determining the <em>functional form</em> <span class="jp">(関数形)</span> of the location \(x(t)\) = knowing the value of the location at every time \(t\).</li>
+    <li><strong>Velocity</strong> <span class="jp">(速度)</span> is the <em>derivative</em> <span class="jp">(微分)</span> of \(x(t)\):
+        \(\;v(t) = \dfrac{dx(t)}{dt}\), so it can be obtained solely from \(x(t)\).</li>
+    <li><strong>Displacement</strong> is the <em>integral</em> of \(v(t)\):
+        \[
+          \int_{a}^{t} v(t')\,dt'
+          \;=\; \int_{a}^{t} \frac{dx(t')}{dt'}\,dt'
+          \;=\; \bigl[\,x(t')\,\bigr]_{t'=a}^{t'=t}
+          \;=\; x(t) - x(a).
+        \]
+        Therefore, <em>if \(x(a)\) is known</em>, one can obtain the location \(x(t)\) as
+        \[
+          \boxed{\;x(t) \;=\; x(a) \;+\; \int_{a}^{t} v(t')\,dt'\;}
+        \]
+    </li>
+  </ul>
+</div>
+
+<figure>
+  <svg viewBox="0 0 700 180" width="700" aria-label="recap diagrams">
+    <defs>
+      <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+        <path d="M0,0 L10,5 L0,10 z" fill="#222"/>
+      </marker>
+    </defs>
+    <!-- Left: x(t) curve -->
+    <g transform="translate(20,20)">
+      <line x1="0" y1="120" x2="280" y2="120" class="axis" marker-end="url(#arr)"/>
+      <line x1="0" y1="150" x2="0"   y2="0"   class="axis" marker-end="url(#arr)"/>
+      <text x="270" y="140" class="lbl-math">t</text>
+      <text x="-12" y="-2"  class="lbl-math">x</text>
+      <path id="recap1" d="" class="curve"/>
+      <circle id="recap1pt" r="3.5" class="pt"/>
+      <line   id="recap1g1" x1="0" y1="0" x2="0" y2="0" class="guide"/>
+      <line   id="recap1g2" x1="0" y1="0" x2="0" y2="0" class="guide"/>
+      <text   id="recap1xa" x="-30" y="38" class="lbl-eq-sm">x(a)</text>
+      <text   id="recap1a"  x="190" y="138" class="lbl-eq-sm">a</text>
+    </g>
+    <!-- Right: integral interpretation -->
+    <g transform="translate(380,20)">
+      <line x1="0" y1="120" x2="280" y2="120" class="axis" marker-end="url(#arr)"/>
+      <line x1="0" y1="150" x2="0"   y2="0"   class="axis" marker-end="url(#arr)"/>
+      <text x="270" y="140" class="lbl-math">t</text>
+      <text x="-12" y="-2"  class="lbl-math">x</text>
+      <path id="recap2" d="" class="curve"/>
+      <line   id="recap2g1" x1="0" y1="0" x2="0" y2="0" class="guide"/>
+      <line   id="recap2g2" x1="0" y1="0" x2="0" y2="0" class="guide"/>
+      <line   id="recap2h"  x1="0" y1="0" x2="0" y2="0" class="guide"/>
+      <circle id="recap2pa" r="3.5" class="pt"/>
+      <circle id="recap2pb" r="3.5" class="pt"/>
+      <text   id="recap2xa" x="-30" y="0"  class="lbl-eq-sm">x(a)</text>
+      <text   id="recap2xt" x="-30" y="0"  class="lbl-eq-sm">x(t)</text>
+      <text   id="recap2a"  x="0"   y="138" class="lbl-eq-sm">a</text>
+      <text   id="recap2t"  x="0"   y="138" class="lbl-eq-sm">t</text>
+    </g>
+  </svg>
+</figure>
+
+<!-- ============================================================ -->
+
+<h3>[Example 1]</h3>
+<p>Let \(x(t) = t^3 + t^2 + t + 1\). The velocity is</p>
+
+\[
+  v(t) \;=\; \frac{dx(t)}{dt} \;=\; 3t^2 + 2t + 1.
+\]
+
+<p>In particular, at \(t = 1\),</p>
+
+\[
+  v(1) \;=\; 3 + 2 + 1 \;=\; \underline{\,6\,}.
+\]
+
+<!-- ============================================================ -->
+
+<h3>[Example 2]</h3>
+<p>Let \(\;v(t) = t^3 + t^2 + t + 1\;\) and suppose the location at \(t = 0\) is \(x(0) = 1\).</p>
+
+\[
+\begin{aligned}
+  x(t)
+   &= x(0) + \int_{0}^{t} v(t')\,dt' \\[2pt]
+   &= 1 + \left[\,\tfrac{1}{4}t'^4 + \tfrac{1}{3}t'^3 + \tfrac{1}{2}t'^2 + t'\,\right]_{t'=0}^{t'=t} \\[2pt]
+   &= 1 + \tfrac{1}{4}t^4 + \tfrac{1}{3}t^3 + \tfrac{1}{2}t^2 + t.
+\end{aligned}
+\]
+
+<p>In particular, at \(t = 1\),</p>
+
+\[
+  x(1) \;=\; 1 + \tfrac{1}{4} + \tfrac{1}{3} + \tfrac{1}{2} + 1
+        \;=\; \frac{12 + 3 + 4 + 6 + 12}{12}
+        \;=\; \underline{\;\tfrac{37}{12}\;}.
+\]
+
+<!-- ============================================================ -->
+<h2>Acceleration <span class="jp">(加速度)</span></h2>
+
+<p>The <strong>acceleration</strong> is the derivative of velocity:</p>
+
+\[
+  \boxed{\;a(t) \;=\; \frac{dv(t)}{dt}
+                 \;=\; \frac{d}{dt}\!\left(\frac{dx(t)}{dt}\right)
+                 \;=\; \frac{d^{2}x(t)}{dt^{2}}\;}
+\]
+
+<p>As with the position-velocity relation, going the other way uses integration. Given the acceleration and an initial velocity \(v(t_0)\),</p>
+
+\[
+  v(t) \;=\; v(t_0) \;+\; \int_{t_0}^{t} a(t')\,dt'.
+\]
+
+<!-- ============================================================ -->
+<h2>The equation of motion <span class="jp">(運動方程式)</span></h2>
+
+<p>What causes acceleration? In classical mechanics the answer is Newton's second law:</p>
+
+<div class="box" style="text-align:center;">
+  \(\displaystyle \boxed{\;m\,a(t) \;=\; F\;}\)
+  &nbsp;&nbsp;
+  <span class="lbl-sm">
+    \(m\) : mass <span class="jp">(質量)</span>,
+    \(F\) : force <span class="jp">(力)</span>
+  </span>
+</div>
+
+<figure>
+  <svg viewBox="0 0 360 90" width="360" aria-label="mass with force arrow">
+    <g transform="translate(40,45)">
+      <circle cx="40" cy="0" r="8" fill="#333"/>
+      <text x="32" y="26" class="lbl-eq">m</text>
+      <line x1="55" y1="0" x2="200" y2="0" stroke="#c0392b" stroke-width="2" marker-end="url(#arr)"/>
+      <text x="210" y="6" class="lbl-eq">F</text>
+    </g>
+  </svg>
+</figure>
+
+<p>Equivalently,</p>
+
+\[
+  a(t) \;=\; \frac{F}{m}.
+\]
+
+<div class="box">
+  Acceleration is driven by force <span class="jp">(力がかかると加速度が生じる)</span>.<br>
+  In a physics problem we determine the motion of an object when a force is applied to it
+  <span class="jp">(力がかかっている時の運動を決定する)</span>.
+</div>
+
+<!-- ============================================================ -->
+<h2>In a gravitational field <span class="jp">(重力場)</span></h2>
+
+<p>Near the Earth's surface, every object of mass \(m\) experiences a downward gravitational force. Choose the \(x\)-axis to point <em>upward</em>; then the force is</p>
+
+<figure>
+  <svg viewBox="0 0 460 200" width="460" aria-label="mass in gravity">
+    <g transform="translate(80,15)">
+      <!-- x-axis pointing up -->
+      <line x1="0" y1="180" x2="0" y2="0" class="axis" marker-end="url(#arr)"/>
+      <text x="-14" y="-2" class="lbl-math">x</text>
+      <!-- mass -->
+      <circle cx="20" cy="60" r="9" fill="#333"/>
+      <text x="-2" y="56" class="lbl-eq">m</text>
+      <!-- force arrow -->
+      <line x1="20" y1="75" x2="20" y2="135" stroke="#c0392b" stroke-width="2" marker-end="url(#arr)"/>
+      <text x="32" y="115" class="lbl-eq">−mg &nbsp;(= F)</text>
+      <!-- g definition -->
+      <text x="170" y="60" class="lbl">g = 9.8 m/s² &nbsp;(gravitational acceleration)</text>
+      <text x="170" y="80" class="lbl-jp">(重力加速度)</text>
+    </g>
+  </svg>
+</figure>
+
+\[
+  F \;=\; -m g, \qquad
+  g \;\approx\; 9.8\ \text{m/s}^{2}.
+\]
+
+<p>Substituting into the equation of motion,</p>
+
+\[
+  m\,a(t) \;=\; -m g
+  \quad\Longrightarrow\quad
+  \boxed{\;a(t) \;=\; -g\;}
+\]
+
+<p>i.e. a <em>constant</em> acceleration <span class="jp">(定数)</span>, independent of the mass \(m\).</p>
+
+<!-- ============================================================ -->
+ <h3>[Example 1]</h3>
+
+
+<figure>
+  <svg viewBox="0 0 540 240" width="540" aria-label="free fall setup and trajectory">
+    <!-- left: physical setup -->
+    <g transform="translate(30,15)">
+      <line x1="0" y1="200" x2="0" y2="0" class="axis" marker-end="url(#arr)"/>
+      <text x="-14" y="-2" class="lbl-math">x</text>
+      <!-- ground -->
+      <line x1="-10" y1="200" x2="170" y2="200" class="ground"/>
+      <g stroke="#444" stroke-width="0.8">
+        <line x1="-6"  y1="200" x2="-12" y2="208"/>
+        <line x1="6"   y1="200" x2="0"   y2="208"/>
+        <line x1="18"  y1="200" x2="12"  y2="208"/>
+        <line x1="30"  y1="200" x2="24"  y2="208"/>
+        <line x1="42"  y1="200" x2="36"  y2="208"/>
+        <line x1="54"  y1="200" x2="48"  y2="208"/>
+        <line x1="66"  y1="200" x2="60"  y2="208"/>
+        <line x1="78"  y1="200" x2="72"  y2="208"/>
+        <line x1="90"  y1="200" x2="84"  y2="208"/>
+        <line x1="102" y1="200" x2="96"  y2="208"/>
+        <line x1="114" y1="200" x2="108" y2="208"/>
+        <line x1="126" y1="200" x2="120" y2="208"/>
+        <line x1="138" y1="200" x2="132" y2="208"/>
+        <line x1="150" y1="200" x2="144" y2="208"/>
+      </g>
+      <text x="-12" y="214" class="lbl-eq-sm">0</text>
+      <!-- mass at height h -->
+      <circle cx="50" cy="40" r="9" fill="#333"/>
+      <line x1="0"  y1="40" x2="50" y2="40" class="guide"/>
+      <text x="-16" y="44" class="lbl-eq">h</text>
+      <text x="62"  y="36" class="lbl-eq-sm">t = 0</text>
+      <text x="62"  y="50" class="lbl-eq-sm">v(0)=0,  x(0)=h</text>
+      <!-- arrow showing fall -->
+      <line x1="50" y1="55" x2="50" y2="190" stroke="#c0392b" stroke-width="1.5" marker-end="url(#arr)" stroke-dasharray="3 3"/>
+    </g>
+    <!-- right: x(t) trajectory -->
+    <g transform="translate(260,15)">
+      <line x1="0" y1="200" x2="260" y2="200" class="axis" marker-end="url(#arr)"/>
+      <line x1="0" y1="220" x2="0"   y2="0"   class="axis" marker-end="url(#arr)"/>
+      <text x="250" y="218" class="lbl-math">t</text>
+      <text x="-14" y="-2"  class="lbl-math">x</text>
+      <path id="dropCurve" d="" class="curve"/>
+      <circle id="dropP0"   r="3.5" class="pt"/>
+      <line   id="dropP0g"  x1="0" y1="0" x2="0" y2="0" class="guide"/>
+      <text   id="dropP0L"  x="-14" y="0" class="lbl-eq-sm">h</text>
+      <circle id="dropPL"   r="3.5" class="pt"/>
+      <line   id="dropPLg"  x1="0" y1="0" x2="0" y2="0" class="guide"/>
+      <text   id="dropPLL"  class="lbl-eq-sm">t* = √(2h/g)</text>
+    </g>
+  </svg>
+</figure>
+
+<p>A particle is released from rest at height \(h\). Setting \(t_0 = 0\),</p>
+
+\[
+  x(0) = h, \qquad v(0) = 0, \qquad a(t) = -g.
+\]
+
+<p>Integrate the acceleration to get the velocity:</p>
+
+\[
+\begin{aligned}
+  v(t)
+   &= v(0) + \int_{0}^{t} a(t')\,dt'
+    = 0 + \int_{0}^{t} (-g)\,dt' \\
+   &= \bigl[\,-g\,t'\,\bigr]_{0}^{t}
+    = -g\,t.
+\end{aligned}
+\]
+
+<p>Integrate the velocity to get the position:</p>
+
+\[
+\begin{aligned}
+  x(t)
+   &= x(0) + \int_{0}^{t} v(t')\,dt'
+    = h + \int_{0}^{t} (-g\,t')\,dt' \\
+   &= h - \tfrac{1}{2}g\,t^{2}.
+\end{aligned}
+\]
+
+<h3>Time to hit the ground &nbsp; <span class="lbl-sm">(着地時刻)</span></h3>
+
+<p>The ball lands when \(x(t^{*}) = 0\):</p>
+\[
+  h - \tfrac{1}{2}g\,t^{*\,2} = 0
+  \;\;\Longrightarrow\;\;
+  t^{*} \;=\; \sqrt{\,\tfrac{2h}{g}\,}.
+\]
+
+<p>The speed at impact is</p>
+
+\[
+  |\,v(t^{*})\,| \;=\; g\,t^{*} \;=\; \sqrt{\,2gh\,}.
+\]
+
+<!-- ============================================================ -->
+ <h3>[Example 2]</h3>
+
+<figure>
+  <svg viewBox="0 0 540 240" width="540" aria-label="throw up setup and trajectory">
+    <!-- left: physical setup -->
+    <g transform="translate(30,15)">
+      <line x1="0" y1="200" x2="0" y2="0" class="axis" marker-end="url(#arr)"/>
+      <text x="-14" y="-2" class="lbl-math">x</text>
+      <line x1="-10" y1="200" x2="170" y2="200" class="ground"/>
+      <text x="-12" y="214" class="lbl-eq-sm">0</text>
+      <!-- mass at ground level moving up -->
+      <circle cx="50" cy="190" r="9" fill="#333"/>
+      <text x="60" y="186" class="lbl-eq-sm">t = 0</text>
+      <text x="60" y="200" class="lbl-eq-sm">x(0)=0,  v(0)=v₀</text>
+      <line x1="50" y1="180" x2="50" y2="60" stroke="#2a8a3e" stroke-width="1.6" marker-end="url(#arr)" stroke-dasharray="3 3"/>
+      <text x="62" y="120" class="lbl-eq-sm">v₀</text>
+    </g>
+    <!-- right: x(t) trajectory -->
+    <g transform="translate(260,15)">
+      <line x1="0" y1="200" x2="260" y2="200" class="axis" marker-end="url(#arr)"/>
+      <line x1="0" y1="220" x2="0"   y2="0"   class="axis" marker-end="url(#arr)"/>
+      <text x="250" y="218" class="lbl-math">t</text>
+      <text x="-14" y="-2"  class="lbl-math">x</text>
+      <path id="throwCurve" d="" class="curve"/>
+      <circle id="throwPk"   r="3.5" class="pt"/>
+      <line   id="throwPkV"  x1="0" y1="0" x2="0" y2="0" class="guide"/>
+      <line   id="throwPkH"  x1="0" y1="0" x2="0" y2="0" class="guide"/>
+      <text   id="throwPkX"  x="-44" y="0" class="lbl-eq-sm">v₀² / (2g)</text>
+      <text   id="throwPkT"  class="lbl-eq-sm">v₀ / g</text>
+      <circle id="throwRe"   r="3.5" class="pt"/>
+      <text   id="throwReT"  class="lbl-eq-sm">2v₀ / g</text>
+    </g>
+  </svg>
+</figure>
+
+<p>The ball is thrown up from ground level with initial speed \(v_0\). Setting \(t_0 = 0\),</p>
+
+\[
+  x(0) = 0, \qquad v(0) = v_0, \qquad a(t) = -g.
+\]
+
+<p>Velocity:</p>
+\[
+  v(t) \;=\; v(0) + \int_{0}^{t}(-g)\,dt'
+        \;=\; v_0 - g\,t.
+\]
+
+<p>Position:</p>
+\[
+\begin{aligned}
+  x(t)
+   &= x(0) + \int_{0}^{t} v(t')\,dt'
+    = 0 + \int_{0}^{t} (v_0 - g\,t')\,dt' \\
+   &= \left[\,v_0\,t' - \tfrac{1}{2}g\,t'^{\,2}\,\right]_{0}^{t}
+    = v_0\,t - \tfrac{1}{2}g\,t^{2}.
+\end{aligned}
+\]
+
+<p>Completing the square reveals the parabola's vertex:</p>
+
+\[
+  x(t) \;=\; -\tfrac{1}{2}g\!\left(t - \tfrac{v_0}{g}\right)^{\!2}
+              + \frac{v_0^{\,2}}{2g}.
+\]
+
+<p>The maximum height \(\,x_{\max} = \dfrac{v_0^{\,2}}{2g}\,\) is reached at \(\,t_{\text{top}} = \dfrac{v_0}{g}\,\), and the ball returns to the ground at \(\,t_{\text{return}} = \dfrac{2v_0}{g}\,\) by symmetry.</p>
+
+<!-- ============================================================ -->
+<h2>9. Summary</h2>
+
+<div class="recap">
+  <ul>
+    <li>Acceleration is the derivative of velocity, equivalently the second derivative of position:
+        \(\;a(t) = \dfrac{dv}{dt} = \dfrac{d^2 x}{dt^2}.\)</li>
+    <li>The <strong>equation of motion</strong> is Newton's second law: \(\;m\,a(t) = F\). Force drives acceleration.</li>
+    <li>In a gravitational field the force is \(F = -mg\), so \(a(t) = -g\) — a constant, independent of mass.</li>
+    <li>Two integrations give \(v(t)\) then \(x(t)\). Two initial conditions \(x(0)\) and \(v(0)\) are required to determine the motion completely.</li>
+  </ul>
+</div>
+
+<!-- ====================================================================
+     Inline JS to populate SVG paths and labels for the figures
+     ==================================================================== -->
+<script>
+(function() {
+  function pathFromFn(fn, t0, t1, n, toX, toY) {
+    let d = '';
+    for (let i = 0; i <= n; i++) {
+      const t = t0 + (t1 - t0) * i / n;
+      d += (i === 0 ? 'M' : 'L') + toX(t).toFixed(2) + ',' + toY(fn(t)).toFixed(2) + ' ';
+    }
+    return d;
+  }
+
+  // === Recap left: x(t) curve with end-point x(a) marker =====
+  {
+    const fn = t => 0.7*Math.sin(1.6*t) + 0.04*t*t*t - 0.1*t + 1.0;
+    const t0 = 0, t1 = 5.2;
+    const W = 260, H = 110;
+    const tx = t => (t-t0)*(W/(t1-t0));
+    const ty = v => 120 - v*16;
+    document.getElementById('recap1').setAttribute('d',
+      pathFromFn(fn, t0, t1, 120, tx, ty));
+    const a = 4.5;
+    const xa = tx(a), ya = ty(fn(a));
+    document.getElementById('recap1pt').setAttribute('cx', xa);
+    document.getElementById('recap1pt').setAttribute('cy', ya);
+    const g1 = document.getElementById('recap1g1');
+    g1.setAttribute('x1', 0); g1.setAttribute('y1', ya);
+    g1.setAttribute('x2', xa); g1.setAttribute('y2', ya);
+    const g2 = document.getElementById('recap1g2');
+    g2.setAttribute('x1', xa); g2.setAttribute('y1', ya);
+    g2.setAttribute('x2', xa); g2.setAttribute('y2', 120);
+    document.getElementById('recap1xa').setAttribute('x', -28);
+    document.getElementById('recap1xa').setAttribute('y', ya + 4);
+    document.getElementById('recap1a').setAttribute('x', xa - 4);
+    document.getElementById('recap1a').setAttribute('y', 138);
+  }
+
+  // === Recap right: x(t) with two endpoints and bracket ======
+  {
+    const fn = t => 0.4*Math.sin(1.4*t) + 0.08*t*t + 0.2*t + 1.0;
+    const t0 = 0, t1 = 5.2;
+    const W = 260, H = 110;
+    const tx = t => (t-t0)*(W/(t1-t0));
+    const ty = v => 120 - v*16;
+    document.getElementById('recap2').setAttribute('d',
+      pathFromFn(fn, t0, t1, 120, tx, ty));
+    const a = 1.0, b = 4.2;
+    const xa = tx(a), ya = ty(fn(a));
+    const xb = tx(b), yb = ty(fn(b));
+    document.getElementById('recap2pa').setAttribute('cx', xa);
+    document.getElementById('recap2pa').setAttribute('cy', ya);
+    document.getElementById('recap2pb').setAttribute('cx', xb);
+    document.getElementById('recap2pb').setAttribute('cy', yb);
+    const g1 = document.getElementById('recap2g1');
+    g1.setAttribute('x1', 0);  g1.setAttribute('y1', ya);
+    g1.setAttribute('x2', xa); g1.setAttribute('y2', ya);
+    const g2 = document.getElementById('recap2g2');
+    g2.setAttribute('x1', 0);  g2.setAttribute('y1', yb);
+    g2.setAttribute('x2', xb); g2.setAttribute('y2', yb);
+    const gv1 = document.getElementById('recap2h');
+    gv1.setAttribute('x1', xa); gv1.setAttribute('y1', ya);
+    gv1.setAttribute('x2', xa); gv1.setAttribute('y2', 120);
+    document.getElementById('recap2xa').setAttribute('x', -28);
+    document.getElementById('recap2xa').setAttribute('y', ya + 4);
+    document.getElementById('recap2xt').setAttribute('x', -28);
+    document.getElementById('recap2xt').setAttribute('y', yb + 4);
+    document.getElementById('recap2a').setAttribute('x', xa - 4);
+    document.getElementById('recap2a').setAttribute('y', 138);
+    document.getElementById('recap2t').setAttribute('x', xb - 4);
+    document.getElementById('recap2t').setAttribute('y', 138);
+  }
+
+  // === Free fall x(t) curve =================================
+  {
+    const g = 9.8, h = 5;
+    const tStar = Math.sqrt(2*h/g);
+    const fn = t => h - 0.5*g*t*t;
+    const W = 260, Hpx = 180;
+    const tx = t => t * (W / (tStar * 1.05));
+    const ty = v => 200 - v*(Hpx/h);
+    document.getElementById('dropCurve').setAttribute('d',
+      pathFromFn(fn, 0, tStar, 80, tx, ty));
+    const p0x = tx(0), p0y = ty(h);
+    document.getElementById('dropP0').setAttribute('cx', p0x);
+    document.getElementById('dropP0').setAttribute('cy', p0y);
+    const g1 = document.getElementById('dropP0g');
+    g1.setAttribute('x1', 0); g1.setAttribute('y1', p0y);
+    g1.setAttribute('x2', p0x); g1.setAttribute('y2', p0y);
+    document.getElementById('dropP0L').setAttribute('y', p0y + 4);
+    const lx = tx(tStar), ly = ty(0);
+    document.getElementById('dropPL').setAttribute('cx', lx);
+    document.getElementById('dropPL').setAttribute('cy', ly);
+    const g2 = document.getElementById('dropPLg');
+    g2.setAttribute('x1', lx); g2.setAttribute('y1', ly);
+    g2.setAttribute('x2', lx); g2.setAttribute('y2', 200);
+    document.getElementById('dropPLL').setAttribute('x', lx - 40);
+    document.getElementById('dropPLL').setAttribute('y', 218);
+  }
+
+  // === Throw up x(t) curve ==================================
+  {
+    const g = 9.8, v0 = 10;
+    const tTop = v0/g;
+    const tReturn = 2*v0/g;
+    const xMax = v0*v0/(2*g);
+    const fn = t => v0*t - 0.5*g*t*t;
+    const W = 260, Hpx = 180;
+    const tx = t => t * (W / (tReturn * 1.1));
+    const ty = v => 200 - v*(Hpx/xMax);
+    document.getElementById('throwCurve').setAttribute('d',
+      pathFromFn(fn, 0, tReturn, 100, tx, ty));
+    const px = tx(tTop), py = ty(xMax);
+    document.getElementById('throwPk').setAttribute('cx', px);
+    document.getElementById('throwPk').setAttribute('cy', py);
+    const pv = document.getElementById('throwPkV');
+    pv.setAttribute('x1', px); pv.setAttribute('y1', py);
+    pv.setAttribute('x2', px); pv.setAttribute('y2', 200);
+    const ph = document.getElementById('throwPkH');
+    ph.setAttribute('x1', 0);  ph.setAttribute('y1', py);
+    ph.setAttribute('x2', px); ph.setAttribute('y2', py);
+    document.getElementById('throwPkX').setAttribute('y', py + 4);
+    document.getElementById('throwPkT').setAttribute('x', px - 14);
+    document.getElementById('throwPkT').setAttribute('y', 218);
+    const rx = tx(tReturn), ry = ty(0);
+    document.getElementById('throwRe').setAttribute('cx', rx);
+    document.getElementById('throwRe').setAttribute('cy', ry);
+    document.getElementById('throwReT').setAttribute('x', rx - 18);
+    document.getElementById('throwReT').setAttribute('y', 218);
+  }
+})();
+</script>
+
+</body>
+</html>
