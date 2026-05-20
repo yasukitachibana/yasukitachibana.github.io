@@ -294,7 +294,38 @@ MathJax = {
     <li>$dt$：パラメータ $t \in \mathbb{R}$ の通常の（解析の）積分要素，無次元</li>
   </ul>
 
-  <h3>4.2　$e^x$ がスカラーになる機構</h3>
+  <h3>4.2　記法の問題：$\int_\gamma e^x$ より $\left(\int e^x\right)(\gamma)$ の方が正直</h3>
+
+  <p>通常の記法 $\int_\gamma e^x$ は，$e^x$ が余接ベクトル（共変）なのに，
+  まるで $e^x$ を積分しているように見えます．
+  $\gamma$ が「積分範囲」に見えて，「$e^x$ に食べられる反変的なもの」という役割が隠れてしまいます．</p>
+
+  <p>構造を正直に書くなら：</p>
+
+  \[
+    \left(\int e^x\right)(\gamma) \;\in\; \mathbb{R}.
+  \]
+
+  <div class="box purple">
+    <div class="box-title">$\left(\int e^x\right)(\gamma)$ という見方</div>
+    \[
+      \underbrace{\int e^x}_{\substack{\text{経路を食べて}\\\text{スカラーを返す汎関数}}}
+      \;:\; \{\text{経路}\} \to \mathbb{R}
+    \]
+    <ul>
+      <li>$e^x \in L^*$：接ベクトルの次元を剥ぐ1-形式</li>
+      <li>$\int e^x$：「経路空間 $\to \mathbb{R}$」の<strong>線形汎関数</strong></li>
+      <li>$\gamma$：その汎関数に食べられる<strong>反変的なもの</strong>（経路）</li>
+      <li>結果 $\left(\int e^x\right)(\gamma) \in \mathbb{R}$：スカラーであることが構造から明白</li>
+    </ul>
+    この記法は de Rham コホモロジーのペアリング $\langle e^x, \gamma \rangle \in \mathbb{R}$ とも一致する．
+  </div>
+
+  <p>$\int_\gamma e^x$ が標準記法になっているのは歴史的な理由（Stokes の定理
+  $\int_{\partial\Omega}\omega = \int_\Omega d\omega$ で $\partial$ と $\int$ を対称に書きたい）によるもので，
+  構造の明示という観点では $\left(\int e^x\right)(\gamma)$ の方が正直です．</p>
+
+  <h3>4.3　$e^x$ がスカラーになる機構</h3>
 
   <p>$\omega = e^x$，$\gamma(t) = t\,e_x$（恒等経路）のとき，$\dot\gamma(t) = e_x$ なので</p>
   \[
@@ -321,7 +352,7 @@ MathJax = {
     \]
   </div>
 
-  <h3>4.3　$\int f\,e^x$ の正体</h3>
+  <h3>4.4　$\int f\,e^x$ の正体</h3>
 
   <p>スカラー関数 $f: L \to \mathbb{R}$（例：密度）が加わると，被積分形式は $f\,e^x$ です．
   リーマン和で書くと：</p>
@@ -346,7 +377,7 @@ MathJax = {
     被積分量の主役は反変ベクトル $f\,e_x$ であり，$e^x$ はそれに作用して次元を剥ぐ道具である．
   </div>
 
-  <h3>4.4　通常記法 $\int f(x)\,dx$ との対応</h3>
+  <h3>4.5　通常記法 $\int f(x)\,dx$ との対応</h3>
 
   <p>通常の解析では $\int f(x)\,dx$ と書きます．これは $\gamma(t)=t$（パラメータ $=$ 座標値）のとき：</p>
   \[
@@ -367,7 +398,7 @@ MathJax = {
     このノートでは両者を $e^x$（共変）と $dx$（解析，無次元）に書き分ける．
   </div>
 
-  <h3>4.5　長さの積分（修正版）</h3>
+  <h3>4.6　長さの積分（修正版）</h3>
 
   <p>長さ $\ell$ を積分で求めます．経路 $\gamma: [0,3] \to L$，$\gamma(t) = t\,e_x$：</p>
   \[
