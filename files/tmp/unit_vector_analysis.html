@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>単位を基底とみなす</title>
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$']],
+    displayMath: [['\\[', '\\]']],
+    tags: 'none'
+  }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-chtml.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;600;700&family=Noto+Sans+JP:wght@400;500&family=Source+Code+Pro&display=swap');
+
+  :root {
+    --ink: #1a1a2e;
+    --mid: #4a4a6a;
+    --paper: #fefefe;
+    --accent: #2d5a8e;
+    --accent2: #8e2d2d;
+    --green: #2d6b4a;
+    --orange: #8e5a1a;
+    --rule: #c8c4bc;
+    --box-blue: #e8f0f8;
+    --box-green: #e8f4ed;
+    --box-orange: #fdf3e3;
+    --box-gray: #f0eeeb;
+    --box-red: #faeaea;
+    --box-purple: #f0ebf8;
+    --purple: #5a2d8e;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Serif JP', 'Hiragino Mincho ProN', Georgia, serif;
+    background: #e8e6e0;
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 2rem 1rem;
+    line-height: 1.9;
+  }
+
+  .page {
+    background: var(--paper);
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 3.5rem 4rem;
+    box-shadow: 0 2px 24px rgba(0,0,0,0.13), 0 1px 4px rgba(0,0,0,0.08);
+    border-top: 4px solid var(--accent);
+  }
+
+  .title-block {
+    text-align: center;
+    border-bottom: 1.5px solid var(--rule);
+    padding-bottom: 1.6rem;
+    margin-bottom: 2rem;
+  }
+  .title-block h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    line-height: 1.3;
+  }
+  .title-block .subtitle {
+    font-size: 0.95rem;
+    color: var(--mid);
+    margin-top: 0.4rem;
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+  .title-block .audience {
+    font-size: 0.82rem;
+    color: var(--mid);
+    margin-top: 0.3rem;
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+
+  h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--accent);
+    border-left: 3px solid var(--accent);
+    padding-left: 0.7em;
+    margin: 2.4rem 0 0.9rem;
+    line-height: 1.4;
+  }
+  h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--ink);
+    margin: 1.6rem 0 0.6rem;
+    padding-left: 0.5em;
+    border-left: 2px solid var(--rule);
+  }
+
+  p { margin-bottom: 0.85rem; font-size: 0.97rem; }
+
+  .box {
+    border-radius: 3px;
+    padding: 1rem 1.2rem;
+    margin: 1.2rem 0;
+    font-size: 0.95rem;
+  }
+  .box-title {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 700;
+    font-size: 0.83rem;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+  }
+  .box.notation  { background: var(--box-gray);   border-left: 4px solid #888; }
+  .box.notation .box-title { color: #555; }
+  .box.defn      { background: var(--box-blue);   border-left: 4px solid var(--accent); }
+  .box.defn .box-title { color: var(--accent); }
+  .box.key       { background: var(--box-green);  border-left: 4px solid var(--green); }
+  .box.key .box-title { color: var(--green); }
+  .box.fix       { background: var(--box-orange); border-left: 4px solid var(--orange); }
+  .box.fix .box-title { color: var(--orange); }
+  .box.warning   { background: var(--box-red);    border-left: 4px solid var(--accent2); }
+  .box.warning .box-title { color: var(--accent2); }
+  .box.purple    { background: var(--box-purple); border-left: 4px solid var(--purple); }
+  .box.purple .box-title { color: var(--purple); }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 0.88rem;
+    margin: 1rem 0;
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+  th {
+    background: var(--accent);
+    color: #fff;
+    padding: 0.5em 0.8em;
+    text-align: left;
+    font-weight: 500;
+    font-size: 0.83rem;
+  }
+  td {
+    padding: 0.45em 0.8em;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: #f7f6f3; }
+
+  ul, ol {
+    padding-left: 1.5em;
+    margin-bottom: 0.8rem;
+    font-size: 0.95rem;
+  }
+  li { margin-bottom: 0.35rem; }
+
+  .highlight { background: #fff3cd; padding: 0.05em 0.2em; border-radius: 2px; }
+
+  .page-footer {
+    margin-top: 2.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--rule);
+    font-size: 0.78rem;
+    color: var(--mid);
+    font-family: 'Noto Sans JP', sans-serif;
+    text-align: right;
+  }
+
+  @media (max-width: 600px) {
+    .page { padding: 2rem 1.4rem; }
+    h2 { font-size: 1.05rem; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="title-block">
+    <h1>単位を基底とみなす</h1>
+  </div>
+
+  <div class="box notation">
+    <div class="box-title">記号の約束（このノート全体）</div>
+    <table>
+      <thead><tr><th>記号</th><th>型</th><th>意味</th></tr></thead>
+      <tbody>
+        <tr><td>$e_x$</td><td>反変（接ベクトルの基底）</td><td>「1 m」というベクトル</td></tr>
+        <tr><td>$e^x$</td><td>共変（双対基底，1-形式）</td><td>メートルで測る目盛り関数</td></tr>
+        <tr><td>$dx$</td><td>無次元スカラーの積分要素</td><td>パラメータ $x \in \mathbb{R}$ の通常の解析的積分要素のみに使う</td></tr>
+        <tr><td>$\gamma$</td><td>写像 $[a,b] \to M$</td><td>積分経路</td></tr>
+        <tr><td>$\dot\gamma$</td><td>反変（接ベクトル）</td><td>経路の接ベクトル，次元あり</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:0.5rem; margin-bottom:0; font-size:0.88rem;">
+      <strong>方針：</strong>双対基底（1-形式）は $e^x$ と書き，$dx$ とは書かない．
+      $dx$ は「パラメータ空間 $\mathbb{R}$ の通常の積分」にのみ現れる無次元の記号とする．
+    </p>
+  </div>
+
+  <!-- ===== 1 ===== -->
+  <h2>1　単位を基底とみなす ― 1 次元の例</h2>
+
+  <p>長さの量全体の集合を $L$ と書きます．$L$ は $\mathbb{R}$ 上の <strong>1 次元ベクトル空間</strong>です．
+  基底をひとつ選ぶことが，単位を選ぶことに他なりません．</p>
+
+  <p>「1 メートル」という長さを $e_x$ と書くことにすれば，任意の長さ $\ell$ は</p>
+  \[ \ell = 3\,e_x \qquad (= 3\text{ m}). \]
+  <p>別の基底 $e_{x'}$（$= 1\text{ cm}$）を取れば，<em>同じ</em> $\ell$ が</p>
+  \[ \ell = 300\,e_{x'} \]
+  <p>と書けます．基底どうしの関係は $e_x = 100\,e_{x'}$（1 m $=$ 100 cm）．
+  基底が 100 倍になると成分は $3 \to 300$ と逆方向に動く――これが <strong>反変</strong> の語源です．</p>
+
+  <!-- ===== 2 ===== -->
+  <h2>2　反変ベクトルとしての物理量</h2>
+
+  <p>質量，時間，電荷，力，エネルギー……いずれも「単位を基底に取れば 1 次元ベクトル空間」になります．
+  これらはすべて反変ベクトルです．</p>
+
+  <p>一般に基底変換 $e'_i = A^j{}_i\,e_j$ に対し，反変成分は逆行列で変換されます：</p>
+  \[ v'^i = (A^{-1})^i{}_j\,v^j. \]
+  <p>1 次元の例では $A = 1/100$（基底側）なので成分側は $A^{-1} = 100$，つまり $3 \to 300$．</p>
+
+  <!-- ===== 3 ===== -->
+  <h2>3　双対基底 $e^x$ とは何か</h2>
+
+  <p>ベクトル空間 $L$ に対して <strong>双対空間</strong> $L^*$ が付随します．
+  $L^*$ の元は「$L$ の元を入れると実数を返す線形写像」です．</p>
+
+  <div class="box defn">
+    <div class="box-title">定義：双対基底 $e^x$</div>
+    $e^x \in L^*$ を
+    \[ e^x(e_x) = 1 \]
+    で定める．これは「<strong>メートルで測った数値を返す</strong>」関数：
+    \[ e^x(3\,e_x) = 3, \qquad e^x(2\,e_x) = 2. \]
+  </div>
+
+  <p>cm 双対基底 $e^{x'}$ は $e^{x'}(e_{x'}) = 1$ で定まります．</p>
+
+  <p><strong>変換則（共変）．</strong>$e_x = 100\,e_{x'}$ から</p>
+  \[ e^x = 100\,e^{x'}. \]
+  <p>確認：$e^x(e_x) = 100\,e^{x'}(100\,e_{x'}) = 100 \times 100 \times \tfrac{1}{100^2}$…
+  直接確認：$e^{x'}(e_{x'})=1$ かつ $e^x(e_x) = 1$，
+  そして $e^x(e_{x'}) = e^x\!\left(\tfrac{1}{100}e_x\right) = \tfrac{1}{100}$，
+  $100\,e^{x'}(e_{x'}) = 100 \times 1 = 100$… </p>
+
+  <div class="box key">
+    <div class="box-title">変換則のまとめ</div>
+    基底 $e_x = 100\,e_{x'}$ に対し，双対基底は<strong>同じ行列</strong>で変換（共変）：
+    \[ e^x = 100\,e^{x'}. \]
+    反変成分は逆行列で変換：$3\,e_x = 300\,e_{x'}$（成分 $3 \to 300$，基底 $e_x \to e_{x'}/100$）．
+  </div>
+
+  <!-- ===== 4 ===== -->
+  <h2>4　積分の二層構造</h2>
+
+  <p>積分を理解するうえで，<strong>二つの層</strong>を意識することが重要です．</p>
+
+  <div class="box purple">
+    <div class="box-title">二層構造</div>
+    <table>
+      <thead><tr><th>層</th><th>住処</th><th>記号</th><th>意味</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>解析の層</strong></td>
+          <td>$\mathbb{R}$（無次元）</td>
+          <td>$dx$，$dt$</td>
+          <td>パラメータの通常の積分要素</td>
+        </tr>
+        <tr>
+          <td><strong>幾何の層</strong></td>
+          <td>$L$，$L^*$（有次元）</td>
+          <td>$e_x$，$e^x$，$\dot\gamma$</td>
+          <td>基底・双対基底・接ベクトル</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="margin-top:0.6rem; margin-bottom:0;">
+      積分とは「幾何の層で $e^x$ が $\dot\gamma$ の次元を剥ぎ，解析の層 $\mathbb{R}$ に降ろしてから $dx$ で足す」操作である．
+    </p>
+  </div>
+
+  <h3>4.1　積分の定義</h3>
+
+  <p>1-形式 $\omega \in L^*$ の，経路 $\gamma: [a,b] \to L$ 上の積分を</p>
+  \[
+    \int_\gamma \omega \;:=\; \int_a^b \omega\!\left(\dot\gamma(t)\right) dt
+  \]
+  <p>と定義します．ここで</p>
+  <ul>
+    <li>$\dot\gamma(t) = \dfrac{d\gamma}{dt} \in L$：次元あり（m）の反変接ベクトル</li>
+    <li>$\omega(\dot\gamma(t)) \in \mathbb{R}$：1-形式が接ベクトルを食べてスカラーへ</li>
+    <li>$dt$：パラメータ $t \in \mathbb{R}$ の通常の（解析の）積分要素，無次元</li>
+  </ul>
+
+  <h3>4.2　$e^x$ がスカラーになる機構</h3>
+
+  <p>$\omega = e^x$，$\gamma(t) = t\,e_x$（恒等経路）のとき，$\dot\gamma(t) = e_x$ なので</p>
+  \[
+    \int_\gamma e^x
+    = \int_a^b e^x(e_x)\,dt
+    = \int_a^b 1\,dt
+    = b - a \;\in\; \mathbb{R}.
+  \]
+  <p>単位が消える機構：</p>
+  \[
+    e^x(\dot\gamma) = e^x(e_x) = 1.
+  \]
+  <p><strong>双対条件 $e^x(e_x)=1$ がちょうど次元を打ち消す</strong>のです．
+  残るのは純粋なパラメータの積分 $\int_a^b dt$ だけです．</p>
+
+  <div class="box key">
+    <div class="box-title">スカラーになる機構の図式</div>
+    \[
+      \underbrace{\dot\gamma = e_x}_{\text{反変（次元あり）}}
+      \xrightarrow{\;e^x(\cdot)\;}
+      \underbrace{e^x(e_x) = 1}_{\text{スカラー（次元消滅）}}
+      \xrightarrow{\;\int dt\;}
+      \underbrace{b-a \;\in\; \mathbb{R}}_{\text{解析の積分}}
+    \]
+  </div>
+
+  <h3>4.3　$\int f\,e^x$ の正体</h3>
+
+  <p>スカラー関数 $f: L \to \mathbb{R}$（例：密度）が加わると，被積分形式は $f\,e^x$ です．
+  リーマン和で書くと：</p>
+  \[
+    \int_\gamma f\,e^x
+    = \int_a^b (f\,e^x)\!\left(\dot\gamma(t)\right) dt
+    = \int_a^b f(\gamma(t))\cdot e^x(e_x)\,dt
+    = \int_a^b f(\gamma(t))\,dt \;\in\; \mathbb{R}.
+  \]
+
+  <div class="box defn">
+    <div class="box-title">三層の分離</div>
+    <table>
+      <thead><tr><th>部分</th><th>型</th><th>役割</th></tr></thead>
+      <tbody>
+        <tr><td>$f\,e_x$（被積分量の反変部分）</td><td>反変ベクトル</td><td>密度で重み付けされた変位</td></tr>
+        <tr><td>$e^x(\cdot)$（1-形式の作用）</td><td>共変 → スカラー</td><td>次元を剥いで $\mathbb{R}$ へ</td></tr>
+        <tr><td>$\int dt$（解析の積分）</td><td>$\mathbb{R}$ 上の積分</td><td>スカラーを足し合わせる</td></tr>
+      </tbody>
+    </table>
+    つまり $\int_\gamma f\,e^x = \int_a^b e^x(f\,e_x)\,dt$．
+    被積分量の主役は反変ベクトル $f\,e_x$ であり，$e^x$ はそれに作用して次元を剥ぐ道具である．
+  </div>
+
+  <h3>4.4　通常記法 $\int f(x)\,dx$ との対応</h3>
+
+  <p>通常の解析では $\int f(x)\,dx$ と書きます．これは $\gamma(t)=t$（パラメータ $=$ 座標値）のとき：</p>
+  \[
+    \int_\gamma f\,e^x = \int_a^b f(t)\,dt.
+  \]
+  <p>右辺の $dt$ が通常記法の $dx$ に対応しています（パラメータ $=$ 座標値なので $dt = dx$）．</p>
+
+  <div class="box warning">
+    <div class="box-title">記号の衝突：通常記法の $dx$ は二種類の異なるものを指していた</div>
+    <table>
+      <thead><tr><th>文脈</th><th>$dx$ の正体</th><th>型</th></tr></thead>
+      <tbody>
+        <tr><td>双対基底</td><td>$e^x$：接ベクトルを食べる1-形式</td><td>共変（$L^*$）</td></tr>
+        <tr><td>積分記号</td><td>$dt$：パラメータの解析的積分要素</td><td>無次元スカラー（$\mathbb{R}$）</td></tr>
+      </tbody>
+    </table>
+    ライプニッツは「微小変位（反変）」の意味で $dx$ を導入し，後に微分形式として共変の $dx$ が定義されたとき同じ記号を流用した．
+    このノートでは両者を $e^x$（共変）と $dx$（解析，無次元）に書き分ける．
+  </div>
+
+  <h3>4.5　長さの積分（修正版）</h3>
+
+  <p>長さ $\ell$ を積分で求めます．経路 $\gamma: [0,3] \to L$，$\gamma(t) = t\,e_x$：</p>
+  \[
+    \left(\int_\gamma e^x\right) e_x
+    = \left(\int_0^3 e^x(e_x)\,dt\right) e_x
+    = \left(\int_0^3 1\,dt\right) e_x
+    = 3\,e_x = 3\text{ m}.
+  \]
+  <p>スカラー $\int_\gamma e^x = 3 \in \mathbb{R}$ に，外から基底 $e_x$ を掛けて物理量に戻しています．</p>
+
+  <p><strong>単位変換で確認．</strong>cm 座標 $t' = 100t$，$\dot\gamma = e_{x'}$（cm 基底）：</p>
+  \[
+    \left(\int_0^{300} e^{x'}(e_{x'})\,dt'\right) e_{x'}
+    = 300\,e_{x'} = 3\text{ m}. \quad \checkmark
+  \]
+
+  <!-- ===== 5 ===== -->
+  <h2>5　仕事：力を $(0,2)$ 型テンソルとして見る</h2>
+
+  <p>物体が経路 $\gamma: [a,b] \to L_m$ に沿って動くとき，位置に依存する力 $F$ による仕事を考えます．
+  ここで $L_m$ は長さの空間（基底 $e_m$），$E_J$ はエネルギーの空間（基底 $e_J$）です．</p>
+
+  <h3>5.1　力のテンソル的な理解</h3>
+
+  <p>力の単位は N $=$ J/m．分子と分母の次元をそれぞれ分解します：</p>
+  <ul>
+    <li>分母：長さ（m）$\Rightarrow$ $L_m^*$ の双対基底 $e^m$ が「m を剥ぐ」</li>
+    <li>分子：エネルギー（J）$\Rightarrow$ $E_J$ の<strong>接ベクトルの基底</strong> $e_J$ が「J という単位を担う」</li>
+  </ul>
+
+  <div class="box warning">
+    <div class="box-title">注意：$e^J$ と $e_J$ の役割の違い</div>
+    <table>
+      <thead><tr><th>記号</th><th>種類</th><th>役割</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>$e_J$</td>
+          <td>接ベクトルの基底（反変）</td>
+          <td>「1 J」という単位を<strong>担う</strong>ベクトル</td>
+        </tr>
+        <tr>
+          <td>$e^J$</td>
+          <td>双対基底（共変）</td>
+          <td>「J で測った数値を返す」目盛り関数，$e^J(e_J)=1$</td>
+        </tr>
+      </tbody>
+    </table>
+    J という単位を<strong>持つ</strong>のは $e_J$（反変）．
+    $e^J$ は逆に J の次元を<strong>剥ぐ</strong>道具（共変）であり，「J を担う」わけではない．
+  </div>
+
+  <p>力 $F$（N $=$ J/m）のテンソル的な構造は：</p>
+  <ul>
+    <li>$e^m$：m を剥ぐ（共変，$L_m^*$）</li>
+    <li>$e^J$：J を剥ぐ（共変，$E_J^*$）</li>
+    <li>$F_J^m$：無次元の数値係数</li>
+  </ul>
+  <p>つまり力は <strong>$E_J^* \otimes L_m^*$ の元</strong>，すなわち $(0,2)$ 型テンソルです：</p>
+  \[
+    F = F_J^m\, e^J \otimes e^m, \qquad F_J^m \in \mathbb{R}\text{（無次元の数値）}.
+  \]
+  <p>$F$ は「$L_m$ の変位を入れると $E_J$ の元（エネルギー）を返す」線形写像ですが，
+  $e^J$ が入力側（変位）ではなく出力に残ることに注意します：</p>
+  \[
+    F(v) = F_J^m\, \underbrace{e^m(v)}_{\text{m を剥ぐ}} \cdot e^J
+    \quad \xrightarrow{\;\times\,e_J\;} \quad
+    F_J^m\, e^m(v) \cdot \underbrace{e^J(e_J)}_{=1} \cdot e_J
+    = F_J^m\, e^m(v)\, e_J \in E_J.
+  \]
+  <p>$e^J$ は途中で $e_J$ に食べられてスカラーになり，最後に $e_J$ が「1 J」の単位を担った結果を返します．</p>
+
+  <div class="box defn">
+    <div class="box-title">記号の整理</div>
+    <table>
+      <thead><tr><th>記号</th><th>空間</th><th>種類</th><th>意味</th></tr></thead>
+      <tbody>
+        <tr><td>$e_m$</td><td>$L_m$</td><td>反変（接ベクトルの基底）</td><td>「1 m」という長さを担うベクトル</td></tr>
+        <tr><td>$e^m$</td><td>$L_m^*$</td><td>共変（双対基底）</td><td>m の次元を剥ぐ，$e^m(e_m)=1$</td></tr>
+        <tr><td>$e_J$</td><td>$E_J$</td><td>反変（接ベクトルの基底）</td><td>「1 J」というエネルギーを担うベクトル</td></tr>
+        <tr><td>$e^J$</td><td>$E_J^*$</td><td>共変（双対基底）</td><td>J の次元を剥ぐ，$e^J(e_J)=1$</td></tr>
+        <tr><td>$F_J^m$</td><td>$\mathbb{R}$</td><td>スカラー</td><td>無次元の力の数値（例：$F_J^m=2$ なら 2 N）</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>5.2　仕事の積分（位置依存する力）</h3>
+
+  <p>力の係数は一般に位置 $\ell \in L_m$ に依存します：</p>
+  \[
+    F(\ell) = F_J^m(\ell)\, e^J \otimes e^m,
+    \qquad F_J^m(\ell) \in \mathbb{R}.
+  \]
+  <p>経路 $\gamma: [a,b] \to L_m$，$\gamma(t) = t\,e_m$ に沿った仕事は：</p>
+  \[
+    W
+    = e_J \int_\gamma F(\dot\gamma)
+    = e_J \int_a^b \bigl(F_J^m(\gamma(t))\, e^J \otimes e^m\bigr)(e_m)\,dt.
+  \]
+  <p>$(e^J \otimes e^m)(e_m)$ を展開：</p>
+  \[
+    (e^J \otimes e^m)(e_m)
+    = e^J \cdot \underbrace{e^m(e_m)}_{=\,1}
+    = e^J.
+  \]
+  <p>$\gamma(t) = t\,e_m$ なので $F_J^m(\gamma(t)) = F_J^m(t\,e_m)$，これを $f(t)$ と略記すると：</p>
+  \[
+    W
+    = e_J \int_a^b f(t)\, e^J\,dt
+    = \left(\int_a^b f(t)\,dt\right) \underbrace{e^J(e_J)}_{=\,1}\, e_J
+    = \left(\int_a^b f(t)\,dt\right) e_J \;\in\; E_J.
+  \]
+
+  <div class="box key">
+    <div class="box-title">仕事の構造（位置依存・テンソル版）</div>
+    \[
+      W = e_J \cdot \int_a^b
+        \underbrace{f(t)}_{\substack{\text{位置依存の}\\\text{無次元係数}}}
+        \underbrace{(e^J \otimes e^m)(e_m)}_{\substack{=\,e^J\\\text{（m を剥ぐ）}}}
+        \,dt
+      = \left(\int_a^b f(t)\,dt\right) e_J \in E_J.
+    \]
+    <ul>
+      <li>$f(t) = F_J^m(t\,e_m)$：位置 $t\,e_m$ における力の無次元係数</li>
+      <li>$e^m(e_m) = 1$：各点で長さの次元を剥ぐ（点ごとに起きる）</li>
+      <li>$\int_a^b f(t)\,dt$：剥いだあとのスカラーを経路に沿って足す（解析の積分）</li>
+      <li>外から $e_J$ を掛けてエネルギー空間 $E_J$ の物理量として返す</li>
+    </ul>
+  </div>
+
+  <h3>5.3　次元の流れ図</h3>
+
+  \[
+    \underbrace{f(t)\,(e^J \otimes e^m)}_{\text{力（N $=$ J/m，位置依存）}}
+    \xrightarrow{\;\text{作用：}\dot\gamma = e_m\;}
+    \underbrace{f(t)\, e^J}_{\text{m を剥いだ残り（点ごと）}}
+    \xrightarrow{\;\int dt\;}
+    \underbrace{\left(\int_a^b f(t)\,dt\right) e^J}_{\text{スカラー $\times$ $e^J$}}
+    \xrightarrow{\;\times\,e_J\;}
+    \underbrace{\left(\int_a^b f(t)\,dt\right) e_J}_{\text{エネルギー（J）}}.
+  \]
+
+  <p>位置依存性 $f(t)$ は積分の中に入り，次元の剥ぎ取り（$e^m(e_m)=1$）は各点で起きて，
+  最後にスカラーの総和（$\int dt$）が行われます．</p>
+
+  <h3>5.4　数値例</h3>
+
+  <p>位置依存する力 $f(t) = 2t$（t が大きいほど強い力），$a=0$，$b=3$（m 座標値）：</p>
+  \[
+    W = \left(\int_0^3 2t\,dt\right) e_J = \left[t^2\right]_0^3\, e_J = 9\,e_J = 9\text{ J}.
+  \]
+
+  <p>定数力の場合（$f(t) = 2$，$a=0$，$b=5$）：</p>
+  \[
+    W = \left(\int_0^5 2\,dt\right) e_J = 10\,e_J = 10\text{ J}.
+  \]
+
+  <p><strong>単位変換で確認（位置依存の場合）．</strong>
+  cm 座標 $t' = 100t$，$e_{m'} = e_m/100$，$e^{m'} = 100\,e^m$：
+  力の係数は $f'(t') = f(t'/100)/100 = 2(t'/100)/100 = t'/5000$ と変換されます．</p>
+  \[
+    W = \left(\int_0^{300} \frac{t'}{5000}\,dt'\right) e_J
+      = \frac{1}{5000}\cdot\frac{300^2}{2}\,e_J
+      = \frac{90000}{5000}\,e_J
+      = 9\,e_J. \quad \checkmark
+  \]
+
+  <!-- ===== 6 ===== -->
+  <h2>6　面積分：2-形式 $e^x \wedge e^y$</h2>
+
+  <h3>6.1　2-形式とは</h3>
+
+  <p>2 次元空間 $L_x \times L_y$ を考えます．
+  <strong>2-形式</strong> $e^x \wedge e^y$ は，2 本の反変ベクトル $u, v$ を入れると実数（面積）を返す交代双線形形式です：</p>
+  \[
+    (e^x \wedge e^y)(u, v)
+    = e^x(u)\,e^y(v) - e^x(v)\,e^y(u)
+    = \det\begin{pmatrix} e^x(u) & e^x(v) \\ e^y(u) & e^y(v) \end{pmatrix}.
+  \]
+  <p>反対称性 $e^x \wedge e^y = -e^y \wedge e^x$ は「向き付き面積」を表します．</p>
+
+  <h3>6.2　面積分の定義</h3>
+
+  <p>曲面 $\Sigma: [0,a]\times[0,b] \to L_x \times L_y$，$\Sigma(s,t) = s\,e_x + t\,e_y$ 上の積分：</p>
+  \[
+    \int_\Sigma e^x \wedge e^y
+    \;:=\; \int_0^a\int_0^b (e^x \wedge e^y)\!\left(\partial_s\Sigma,\,\partial_t\Sigma\right) ds\,dt.
+  \]
+  <p>ここで</p>
+  <ul>
+    <li>$\partial_s\Sigma = e_x$（$s$ 方向の接ベクトル，反変，m）</li>
+    <li>$\partial_t\Sigma = e_y$（$t$ 方向の接ベクトル，反変，m）</li>
+    <li>$ds,\,dt$：パラメータの解析的積分要素（無次元）</li>
+  </ul>
+
+  <h3>6.3　計算</h3>
+  \[
+    (e^x \wedge e^y)(e_x, e_y)
+    = e^x(e_x)\,e^y(e_y) - e^x(e_y)\,e^y(e_x)
+    = 1 \cdot 1 - 0 \cdot 0 = 1.
+  \]
+  \[
+    \int_\Sigma e^x \wedge e^y
+    = \int_0^a\int_0^b 1\,ds\,dt = ab.
+  \]
+  <p>例：$a = 2$ m，$b = 3$ m なら面積 $= 6$（m² の数値）．
+  物理量として返すには外から $e_x \otimes e_y$ を掛けて $6\,\text{m}^2$．</p>
+
+  <div class="box key">
+    <div class="box-title">面積分の構造</div>
+    \[
+      \int_\Sigma \underbrace{e^x \wedge e^y}_{\text{2-形式（共変 $\times$ 共変）}}
+      = \int_0^a\int_0^b
+        \underbrace{(e^x\wedge e^y)(e_x,e_y)}_{=\,1\text{（次元消去）}}
+        \underbrace{ds\,dt}_{\text{解析の積分}} = ab \in \mathbb{R}.
+    \]
+    双対条件 $e^x(e_x)=1$，$e^y(e_y)=1$ が二方向の次元をそれぞれ剥ぐ．
+  </div>
+
+  <h3>6.4　物理量（面積）として返す ― $e_x \otimes e_y$ を外から掛ける</h3>
+
+  <p>$\int_\Sigma e^x \wedge e^y = ab \in \mathbb{R}$ はスカラーです．
+  これは「m² の数値」ではあっても，<strong>単位付きの面積ベクトル（反変テンソル）ではありません</strong>．</p>
+
+  <p>物理量としての面積（$x$ 方向の長さ単位 $\times$ $y$ 方向の長さ単位）を得るには，
+  外から $e_x \otimes e_y$ を掛けます：</p>
+
+  \[
+    \boxed{
+      \mathcal{A}
+      \;=\;
+      (e_x \otimes e_y)
+      \int_\Sigma e^x \wedge e^y
+      \;=\;
+      ab\,(e_x \otimes e_y).
+    }
+  \]
+
+  <p>$e_x \otimes e_y$ は $x$ 方向・$y$ 方向の基底ベクトルのテンソル積であり，
+  「m × m $=$ m²」という単位を担う <strong>$(2,0)$ 型反変テンソル</strong>です．</p>
+
+  <div class="box purple">
+    <div class="box-title">長さ・面積・体積の統一的な構造</div>
+    <table>
+      <thead>
+        <tr><th>物理量</th><th>積分操作（スカラーを作る）</th><th>単位を戻す</th><th>結果</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>長さ</td>
+          <td>$\displaystyle\int_\gamma e^x$</td>
+          <td>$\times\; e_x$</td>
+          <td>$\ell\,e_x \in L$</td>
+        </tr>
+        <tr>
+          <td>面積</td>
+          <td>$\displaystyle\int_\Sigma e^x \wedge e^y$</td>
+          <td>$\times\; e_x \otimes e_y$</td>
+          <td>$ab\,(e_x \otimes e_y) \in L_x \otimes L_y$</td>
+        </tr>
+        <tr>
+          <td>体積</td>
+          <td>$\displaystyle\int_V e^x \wedge e^y \wedge e^z$</td>
+          <td>$\times\; e_x \otimes e_y \otimes e_z$</td>
+          <td>$abc\,(e_x \otimes e_y \otimes e_z) \in L_x \otimes L_y \otimes L_z$</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="margin-top:0.6rem; margin-bottom:0;">
+      パターン：$k$-形式（共変）が $k$ 方向の次元を剥いでスカラーを作り，
+      $k$ 個の基底ベクトルのテンソル積（反変）が外から単位を戻す．
+    </p>
+  </div>
+
+  <div class="box key">
+    <div class="box-title">なぜ $e_x \otimes e_y$ であって $e_x \wedge e_y$ ではないか</div>
+    <p style="margin-bottom:0.4rem;">
+      積分 $\int_\Sigma e^x \wedge e^y$ はすでに「向き付き」の情報を処理済みです（$\wedge$ が反対称性を担った）．
+      外に掛ける $e_x \otimes e_y$ は単に「$x$ 方向 m，$y$ 方向 m」という<strong>単位の担い手</strong>であり，
+      反対称性は不要です．
+    </p>
+    <p style="margin-bottom:0;">
+      向き付き面積ベクトル（例：法線ベクトル）が欲しい場合は別途 $e_x \wedge e_y$（$(2,0)$ 型交代テンソル）を使いますが，
+      それはここでの「単位を戻す」操作とは異なる話です．
+    </p>
+  </div>
+
+  <h3>6.5　単位変換で確認</h3>
+
+  <p>cm 座標 $s' = 100s$，$t' = 100t$：</p>
+  \[
+    (e_{x'} \otimes e_{y'})
+    \int_0^{200}\int_0^{300} (e^{x'}\wedge e^{y'})(e_{x'},e_{y'})\,ds'\,dt'
+    = 60000\,(e_{x'} \otimes e_{y'}).
+  \]
+  <p>$e_{x'} = e_x/100$，$e_{y'} = e_y/100$ なので</p>
+  \[
+    60000\,(e_{x'} \otimes e_{y'})
+    = 60000 \times \frac{1}{100} \times \frac{1}{100}\,(e_x \otimes e_y)
+    = 6\,(e_x \otimes e_y). \quad \checkmark
+  \]
+  <p>スカラー積分値は $6 \to 60000$ と $100^2$ 倍に動きますが，
+  外の基底テンソルが $1/100^2$ に縮むので，物理量としての面積は不変です．</p>
+
+  <!-- ===== 7 ===== -->
+  <h2>7　全体像のまとめ</h2>
+
+  <table>
+    <thead>
+      <tr><th></th><th>反変</th><th>共変（$k$-形式・テンソル）</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>基底</td>
+        <td>$e_m$，$e_J$（単位ベクトル，次元あり）</td>
+        <td>$e^m$，$e^J$（双対基底，次元を剥ぐ）</td>
+      </tr>
+      <tr>
+        <td>変換則</td>
+        <td>基底と逆（$A^{-1}$）</td>
+        <td>基底と同じ（$A$）</td>
+      </tr>
+      <tr>
+        <td>代表例</td>
+        <td>長さ $\ell\,e_m$，仕事 $W\,e_J$，面積 $ab\,(e_m\otimes e_m)$</td>
+        <td>力 $F_J^m\,(e^J\otimes e^m)$，線密度，$e^m\wedge e^m$</td>
+      </tr>
+      <tr>
+        <td>単位例</td>
+        <td>m，J，m²</td>
+        <td>N $=$ J/m，kg/m，1/m²</td>
+      </tr>
+      <tr>
+        <td>積分での役割</td>
+        <td>$\dot\gamma$：経路の接ベクトル（食べられる側）<br>$e_J$：結果の単位を外から戻す</td>
+        <td>$e^m(\dot\gamma)$：次元を剥いでスカラーへ<br>$e^J$：エネルギーの次元を担う</td>
+      </tr>
+      <tr>
+        <td>解析の積分要素</td>
+        <td colspan="2">$dt$，$ds\,dt$（無次元，パラメータの通常積分）</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="box purple">
+    <div class="box-title">長さ・面積・仕事の統一的な構造</div>
+    <table>
+      <thead>
+        <tr><th>物理量</th><th>力の形</th><th>積分（スカラー化）</th><th>単位を戻す</th><th>結果の空間</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>長さ</td>
+          <td>$e^m$</td>
+          <td>$\displaystyle\int_\gamma e^m(\dot\gamma)\,dt$</td>
+          <td>$\times\;e_m$</td>
+          <td>$L_m$</td>
+        </tr>
+        <tr>
+          <td>面積</td>
+          <td>$e^m\wedge e^m$</td>
+          <td>$\displaystyle\int_\Sigma (e^m\wedge e^m)(\partial_s,\partial_t)\,ds\,dt$</td>
+          <td>$\times\;e_m\otimes e_m$</td>
+          <td>$L_m\otimes L_m$</td>
+        </tr>
+        <tr>
+          <td>仕事</td>
+          <td>$F_J^m\,(e^J\otimes e^m)$</td>
+          <td>$\displaystyle\int_\gamma F_J^m\,e^m(\dot\gamma)\,dt$</td>
+          <td>$\times\;e_J$</td>
+          <td>$E_J$</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="box key">
+    <div class="box-title">覚え方</div>
+    <ul>
+      <li>単位は基底 $e_x$，物理量は反変ベクトル．</li>
+      <li>「/ (per)」の付く量は共変ベクトル（1-形式）$e^x$．</li>
+      <li>$e^x$ は $e_x$ の次元を剥ぐ道具；双対条件 $e^x(e_x)=1$ が次元を消す．</li>
+      <li>積分は三層：幾何（$e^x$，$\dot\gamma$）→ スカラー化 → 解析（$\int dt$）．</li>
+      <li>$dx$ はパラメータ空間 $\mathbb{R}$ の積分要素のみに使い，1-形式とは書き分ける．</li>
+      <li>$k$-形式は $k$ 方向の次元を同時に剥ぐ；面積分なら $e^x \wedge e^y$ が二方向を処理する．</li>
+    </ul>
+  </div>
+
+  <div class="page-footer">2026年5月</div>
+</div>
+</body>
+</html>
