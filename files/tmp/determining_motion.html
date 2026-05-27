@@ -83,19 +83,25 @@
   .lbl-eq    { font: italic 12.5px "Cambria","Times New Roman",serif; fill: #222; }
   .lbl-eq-sm { font: italic 11.5px "Cambria","Times New Roman",serif; fill: #444; }
   .arrow     { stroke: #222; stroke-width: 1.4; fill: #222; }
+
+  /* Animation canvas */
+  #motionAnim {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+    height: auto;
+    background: transparent;
+  }
 </style>
 </head>
 <body>
-
 <header>
   <h1>Determining Motion I <span style="font-weight:normal;color:var(--muted);font-size:0.7em;">[in Classical Mechanics (古典力学)]</span>
   </h1>
   <div class="meta">IGS 200 &nbsp;·&nbsp;AY2026 Spring&nbsp;·&nbsp; Tachibana (GC)</div>
 </header>
-
 <!-- ============================================================ -->
 <h2>The Question</h2>
-
 <div class="box">
   When can we say
   <ul style="margin:6px 0 6px 22px;">
@@ -103,12 +109,9 @@
     <li>a given motion is <em>completely known</em>? <span class="jp">(与えられた運動を完全に知る)</span></li>
   </ul>
 </div>
-
 <!-- ============================================================ -->
 <h2>Determining Motion</h2>
-
 <h3>Setup: motions of <span class="underline">a point</span> <span class="jp">(点)</span></h3>
-
 <figure>
   <svg viewBox="0 0 460 100" width="460" aria-label="moving point P with trajectory arrow">
     <defs>
@@ -123,9 +126,7 @@
     <text x="345" y="62" class="lbl-jp">(動く点 P)</text>
   </svg>
 </figure>
-
 <p><strong>Why simplify to a point?</strong> &nbsp; To strip away internal structure — no rotation, no deformation, no internal degrees of freedom. The motion is then captured by a single position over time.</p>
-
 <figure>
   <svg viewBox="0 0 460 140" width="460" aria-label="no rotation, no deformation">
     <!-- No rotation -->
@@ -145,46 +146,24 @@
     </g>
   </svg>
 </figure>
-
-
-
 <p>The position changes along a line. If we lay out time horizontally, the same motion becomes a curve in the <span class="lbl-math">(t, x)</span>-plane:</p>
 
+<!-- ═══════════════════════════════════════════════════════════════
+     ANIMATED FIGURE: 1D motion → x(t) curve
+     Left panel : point moving along vertical position axis
+     Right panel: x(t) curve traced in real-time
+     ═══════════════════════════════════════════════════════════════ -->
 <figure>
-  <svg viewBox="0 0 600 240" width="600" aria-label="1D motion unfolded over time">
-    <!-- Left: vertical motion -->
-    <g transform="translate(40,20)">
-      <line x1="0" y1="0" x2="0" y2="190" class="axis" marker-end="url(#arr)"/>
-      <text x="-6" y="-6" class="lbl-math">x</text>
-      <!-- wiggly vertical path -->
-      <path id="vertWiggle" d="" class="curve"/>
-      <circle id="vertPt" r="3.5" class="pt"/>
-    </g>
-    <!-- arrow to right -->
-    <g transform="translate(110,120)">
-      <line x1="0" y1="0" x2="90" y2="0" stroke="#222" stroke-width="1.4" marker-end="url(#arr)"/>
-      <text x="6" y="-8" class="lbl">unfold along time</text>
-    </g>
-    <!-- Right: x(t) graph -->
-    <g transform="translate(220,20)">
-      <line x1="0" y1="100" x2="370" y2="100" class="axis" marker-end="url(#arr)"/>
-      <line x1="0" y1="200" x2="0" y2="0"   class="axis" marker-end="url(#arr)"/>
-      <text x="360" y="120" class="lbl-math">t</text>
-      <text x="-12" y="-2"  class="lbl-math">x</text>
-      <path id="xtCurve" d="" class="curve"/>
-    </g>
-  </svg>
+  <canvas id="motionAnim" width="600" height="240"
+          aria-label="Animation: 1D motion unfolded over time into x(t) graph"></canvas>
 </figure>
 
 <div class="box" style="text-align:center; font-size:15.5px;">
   If you can draw this <span class="lbl-math">x(t)</span> curve, you know every <em>kinematic</em> quantity of the motion.
 </div>
-
 <h3>When can you draw this graph?</h3>
 <p>You need to know the value of <span class="lbl-math">x</span> (position) for all <span class="lbl-math">t</span> (time). Mathematically, \(x(t)\) is a <em>function</em> of \(t\) <span class="jp">(関数)</span>; we need its functional form <span class="jp">(関数形)</span>.</p>
-
 <h3>Example: \(x(t) = t + 1\)</h3>
-
 <figure>
   <svg viewBox="0 0 460 240" width="460" aria-label="x(t) = t + 1">
     <g transform="translate(110,20)">
@@ -207,21 +186,14 @@
     </g>
   </svg>
 </figure>
-
 <p>You can tell the location of <em>P</em> at every time.</p>
-
 <hr class="soft">
-
 <!-- ============================================================ -->
 <h2>Velocity <span class="jp">(速度)</span></h2>
-
 <p>Can \(x(t)\) tell the speed or velocity of the motion?</p>
 <p><span class="yesbox">Yes!</span> But how?</p>
-
 <p>Reminder: <strong>velocity</strong> is a signed quantity (in 1D the sign indicates direction); <strong>speed</strong> is its magnitude: \(\;\text{speed} = |\text{velocity}|.\)</p>
-
 <h3>Start with constant velocity \(v\) <span class="jp">(速度一定)</span></h3>
-
 <figure>
   <svg viewBox="0 0 460 270" width="460" aria-label="constant velocity line">
     <g transform="translate(60,20)">
@@ -251,15 +223,10 @@
     </g>
   </svg>
 </figure>
-
 <div class="box" style="text-align:center;">
   The slope <span class="jp">(傾き)</span> of the line equals the velocity \(v\).
 </div>
-
-
-
 <p>For a non-linear curve, the velocity changes over time. Zoom in on a small interval near time \(t\): the curve is well-approximated by the chord from \( (t, x(t)) \) to \( (t+\Delta t,\; x(t+\Delta t)) \).</p>
-
 <figure>
   <svg viewBox="0 0 820 290" width="820" aria-label="general curve with zoomed chord">
     <!-- left panel: wavy curve -->
@@ -297,23 +264,17 @@
     </g>
   </svg>
 </figure>
-
 <p style="text-align:center;" class="lbl-sm">
   where &nbsp; \(\Delta t = (t+\Delta t) - t,\quad \Delta x = x(t+\Delta t) - x(t)\).
 </p>
-
 <p>The slope of this chord <em>approximates</em> the velocity:</p>
-
 \[
   v_{\text{approx}} \;=\; \text{slope} \;=\; \frac{\Delta x}{\Delta t}
                  \;=\; \frac{x(t+\Delta t) - x(t)}{\Delta t}
 \]
-
 <p>Both \(x(t+\Delta t)\) and \(x(t)\) are known once the function \(x(t)\) is known.</p>
-
 <h3>Reproducing the original curve</h3>
 <p>Replace the curve by line segments of width \(\Delta t\). The smaller \(\Delta t\), the better the polyline matches the curve at every point.</p>
-
 <figure>
   <svg viewBox="0 0 500 240" width="500" aria-label="piecewise linear approximation">
     <g transform="translate(30,20)">
@@ -332,15 +293,10 @@
     </g>
   </svg>
 </figure>
-
 <div class="box" style="text-align:center;">
   Take the limit &nbsp; \(\boxed{\;\Delta t \to 0\;}\) &nbsp; to recover the curve exactly.
 </div>
-
-
-
 <p>In the limit, the chord becomes the <em>tangent line</em> <span class="jp">(接線)</span>, whose slope is the instantaneous velocity:</p>
-
 <figure>
   <svg viewBox="0 0 460 200" width="460" aria-label="tangent at a point">
     <g transform="translate(40,20)">
@@ -354,32 +310,24 @@
     </g>
   </svg>
 </figure>
-
 \[
   \boxed{\;v(t) \;=\; \lim_{\Delta t \to 0}\frac{x(t+\Delta t) - x(t)}{\Delta t}
             \;=\; \frac{dx(t)}{dt} \;=\; x'(t)\;}
 \]
-
 <p style="text-align:center;"><span class="lbl-sm">derivative of \(x\) &nbsp;<span class="jp">(微分)</span></span></p>
-
 <p>This is <em>defined</em> as the <span class="underline">true</span> velocity of the motion.</p>
-
-
 <h3>Summary</h3>
 <div class="box" style="text-align:left;">
 <ul>
   <li>Velocity is the derivative of \(x(t)\) <span class="jp">(微分)</span>, thus</li>
   <li>Velocity can be obtained from \(x(t)\) by differentiation.</li>
 </ul>
-
 \[
   v(t) \;=\; \frac{dx(t)}{dt} \;=\; \lim_{\Delta t \to 0}\frac{x(t+\Delta t) - x(t)}{\Delta t}
 \]
 </div>
-
 <h3>Example</h3>
 <p>Let \(x(t) = (t-1)^2 - 1\). Find the velocity at \(t = \tfrac{5}{2}\).</p>
-
 <figure>
   <svg viewBox="0 0 460 240" width="460" aria-label="parabola example">
     <g transform="translate(120,20)">
@@ -398,7 +346,6 @@
     </g>
   </svg>
 </figure>
-
 \[
   v(t) \;=\; \frac{dx}{dt}
         \;=\; \bigl[(t-1)^2 - 1\bigr]'
@@ -408,22 +355,16 @@
 \[
   v\!\left(\tfrac{5}{2}\right) \;=\; 2 \cdot \tfrac{5}{2} - 2 \;=\; 5 - 2 \;=\; \underline{\,3\,}
 \]
-
 <!-- ============================================================ -->
 <h2>From velocity back to position</h2>
-
-<p>Velocity is obtained by differentiating \(x(t)\). Can we recover \(x(t)\) from the functional form ofvelocity \(v(t)\)?</p>
-
+<p>Velocity is obtained by differentiating \(x(t)\). Can we recover \(x(t)\) from the functional form of velocity \(v(t)\)?</p>
 <p>▶ Integration is the inverse operation of differentiation <span class="jp">(積分 — 微分の逆操作)</span>:</p>
-
 \[
   \int_{a}^{b} \frac{dx(t)}{dt}\,dt
   \;=\; \bigl[\,x(t)\,\bigr]_{a}^{b}
   \;=\; x(b) - x(a)
 \]
-
 <p class="lbl-sm" style="text-align:center;">(this is the fundamental theorem of calculus)</p>
-
 <figure>
   <svg viewBox="0 0 620 240" width="620" aria-label="curve with displacement bracket">
     <g transform="translate(40,20)">
@@ -444,15 +385,12 @@
     </g>
   </svg>
 </figure>
-
 <p>Only the displacement \(x(b) - x(a)\) can be obtained from the integral.
 To know the location \(x(b)\) itself, you still need to know \(x(a)\):</p>
-
 \[
   x(b) \;=\; \bigl(x(b) - x(a)\bigr) + x(a)
         \;=\; \int_{a}^{b} v(t)\,dt \;+\; \underline{\,x(a)\,}
 \]
-
 <!-- ============================================================ -->
 <h3>Summary</h3>
 <div class="box" style="text-align:left;">
@@ -460,15 +398,12 @@ To know the location \(x(b)\) itself, you still need to know \(x(a)\):</p>
   <li>Displacement is the integral of \(v(t)\).</li>
   <li>To determine the <em>location</em>, knowing the velocity \(v(t)\) is <strong>not enough</strong> — you also need an initial position.</li>
 </ul>
-
 \[
   x(b) - x(a) \;=\; \int_{a}^{b} v(t)\,dt
 \]
 </div>
-
 <h3>Example</h3>
 <p>Given \(v(t) = 2(t-1)\) and \(\boxed{\,x(1) = -1\,}\), find \(x(t=2)\).</p>
-
 \[
 \begin{aligned}
   x(2) - x(1)
@@ -484,11 +419,11 @@ To know the location \(x(b)\) itself, you still need to know \(x(a)\):</p>
 \]
 
 <!-- ====================================================================
-     Inline JS to populate SVG paths and labels for the figures
+     JavaScript: static SVG figures + animation
      ==================================================================== -->
 <script>
 (function() {
-  // Helpers ----------------------------------------------------
+  /* ── Helpers ──────────────────────────────────────────────────────── */
   function pathFromFn(fn, t0, t1, n, toX, toY) {
     let d = '';
     for (let i = 0; i <= n; i++) {
@@ -499,7 +434,6 @@ To know the location \(x(b)\) itself, you still need to know \(x(a)\):</p>
     }
     return d;
   }
-  // Horizontal under-brace from (xs, y) to (xe, y), apex pointing down at midpoint.
   function hBrace(xs, xe, y, d) {
     d = d || 6;
     const xm = (xs + xe) / 2;
@@ -507,7 +441,6 @@ To know the location \(x(b)\) itself, you still need to know \(x(a)\):</p>
     const w2 = xe - xm - 2*d;
     return `M ${xs},${y} q 0,${d} ${d},${d} h ${w1} q ${d},0 ${d},${d} q 0,${-d} ${d},${-d} h ${w2} q ${d},0 ${d},${-d}`;
   }
-  // Vertical brace from (x, yTop) to (x, yBottom), apex pointing right.
   function vBrace(x, yTop, yBottom, d) {
     d = d || 6;
     const ym = (yTop + yBottom) / 2;
@@ -516,72 +449,31 @@ To know the location \(x(b)\) itself, you still need to know \(x(a)\):</p>
     return `M ${x},${yTop} q ${d},0 ${d},${d} v ${h1} q 0,${d} ${d},${d} q ${-d},0 ${-d},${d} v ${h2} q 0,${d} ${-d},${d}`;
   }
 
-  // Figure: vertical wiggle + horizontal x(t) -----------------
-  {
-    const fn = t => 0.7*Math.sin(2.5*t) + 0.04*t*t*t - 0.2*t;
-    const t0 = 0, t1 = 6;
-    // vertical: y axis -> position; x stays at 0
-    // map t into vertical SVG space (pixels 180..10), x value -> small horizontal swing centered at 0
-    const verticalD = pathFromFn(
-      fn, t0, t1, 120,
-      t => 8 * fn(t),               // small horizontal wobble
-      t => 180 - (t - t0) * (170/(t1-t0))
-    );
-    document.getElementById('vertWiggle').setAttribute('d', verticalD);
-    // moving dot at "current time" = some interior t
-    const tNow = 3.0;
-    document.getElementById('vertPt').setAttribute('cx', 8*fn(tNow));
-    document.getElementById('vertPt').setAttribute('cy', 180 - (tNow - t0)*(170/(t1-t0)));
-
-    // x(t) curve on right panel: 370 px wide, 200 px tall (centered at y=100)
-    const xtD = pathFromFn(
-      fn, t0, t1, 200,
-      t => (t - t0) * (350/(t1-t0)),
-      v => 100 - v * 35
-    );
-    document.getElementById('xtCurve').setAttribute('d', xtD);
-  }
-
-  // Figure: general wavy curve + zoom -------------------------
+  /* ── Wavy curve + zoom ─────────────────────────────────────────────── */
   {
     const fn = t => 0.6*Math.sin(2.2*t) + 0.06*Math.pow(t,3) - 0.3*t + 1.2;
     const t0 = 0.2, t1 = 5.0;
-    // left panel: 300 wide, baseline y=200
     const W = 300, H = 200;
     const tx = t => (t - t0) * (W/(t1-t0));
     const ty = v => H - v * 22;
-    document.getElementById('wave1').setAttribute('d',
-      pathFromFn(fn, t0, t1, 240, tx, ty));
-
-    // Pick a representative point on a rising part of the curve
+    document.getElementById('wave1').setAttribute('d', pathFromFn(fn, t0, t1, 240, tx, ty));
     const tStar = 4.0, dt = 0.8;
     const cX = tx(tStar), cY = ty(fn(tStar));
-
-    // ROI circle: centered on the curve at tStar
     const rRoi = 18;
     const roi = document.getElementById('roiCircle');
     roi.setAttribute('cx', cX);
     roi.setAttribute('cy', cY);
-
-    // Arrow from the circle edge toward the zoom panel (left-panel local coords)
-    const ang = 0.05;  // slightly down-right
+    const ang = 0.05;
     const aSx = cX + rRoi * Math.cos(ang);
     const aSy = cY + rRoi * Math.sin(ang);
-    const aEx = 410, aEy = 130;   // aims clearly into the zoom panel area
     const ar = document.getElementById('roiArrow');
-    ar.setAttribute('x1', aSx);
-    ar.setAttribute('y1', aSy);
-    ar.setAttribute('x2', aEx);
-    ar.setAttribute('y2', aEy);
-
-    // Caption below the circle
+    ar.setAttribute('x1', aSx); ar.setAttribute('y1', aSy);
+    ar.setAttribute('x2', 410); ar.setAttribute('y2', 130);
     const rt = document.getElementById('roiText');
     rt.setAttribute('x', cX - 78);
     rt.setAttribute('y', 250);
-
-    // Right panel zoom: show [tStar, tStar+dt]
     const ZW = 240, ZH = 180;
-    const ztX = t => (t - tStar) * (ZW/dt) + 50;   // left offset gives room for x(t) label
+    const ztX = t => (t - tStar) * (ZW/dt) + 50;
     let vLo = fn(tStar), vHi = fn(tStar);
     for (let k = 0; k <= 40; k++) {
       const tt = tStar + (dt*k)/40;
@@ -590,74 +482,53 @@ To know the location \(x(b)\) itself, you still need to know \(x(a)\):</p>
       if (vv > vHi) vHi = vv;
     }
     const margin = 0.18 * (vHi - vLo);
-    const vMin = vLo - margin;
-    const vMax = vHi + margin;
+    const vMin = vLo - margin, vMax = vHi + margin;
     const ztY = v => 200 - (v - vMin)/(vMax - vMin) * ZH;
-
-    document.getElementById('wave1zoom').setAttribute('d',
-      pathFromFn(fn, tStar, tStar+dt, 80, ztX, ztY));
-
-    const x1 = ztX(tStar),       y1 = ztY(fn(tStar));
-    const x2 = ztX(tStar+dt),    y2 = ztY(fn(tStar+dt));
+    document.getElementById('wave1zoom').setAttribute('d', pathFromFn(fn, tStar, tStar+dt, 80, ztX, ztY));
+    const x1 = ztX(tStar),    y1 = ztY(fn(tStar));
+    const x2 = ztX(tStar+dt), y2 = ztY(fn(tStar+dt));
     document.getElementById('zp1').setAttribute('cx', x1);
     document.getElementById('zp1').setAttribute('cy', y1);
     document.getElementById('zp2').setAttribute('cx', x2);
     document.getElementById('zp2').setAttribute('cy', y2);
-
     const chord = document.getElementById('chord1');
     chord.setAttribute('x1', x1); chord.setAttribute('y1', y1);
     chord.setAttribute('x2', x2); chord.setAttribute('y2', y2);
-
     const v1 = document.getElementById('dt_v1');
     v1.setAttribute('x1', x1); v1.setAttribute('y1', y1);
     v1.setAttribute('x2', x1); v1.setAttribute('y2', 200);
     const v2 = document.getElementById('dt_v2');
     v2.setAttribute('x1', x2); v2.setAttribute('y1', y2);
     v2.setAttribute('x2', x2); v2.setAttribute('y2', 200);
-    // horizontal guide showing the base of the right triangle from zp1 to (zp2.x, zp1.y)
     const hg = document.getElementById('dt_hg');
     hg.setAttribute('x1', x1); hg.setAttribute('y1', y1);
     hg.setAttribute('x2', x2); hg.setAttribute('y2', y1);
-
-    // Under-brace for Δt below the t-axis labels
     document.getElementById('dt_brace').setAttribute('d', hBrace(x1, x2, 222, 6));
-    // Vertical brace for Δx on the right side of zp2 (top y2 < bottom y1 in pixel coords)
     document.getElementById('dx_brace').setAttribute('d', vBrace(x2 + 8, y2, y1, 6));
-
-    // t-axis labels (centered under each drop line)
     document.getElementById('t_lbl').setAttribute('x', x1 - 3);
     document.getElementById('t_lbl').setAttribute('y', 216);
     document.getElementById('ttdt_lbl').setAttribute('x', x2 - 22);
     document.getElementById('ttdt_lbl').setAttribute('y', 216);
-    // Δt label centered just below the under-brace tip
     document.getElementById('dt_lbl').setAttribute('x', (x1+x2)/2 - 8);
     document.getElementById('dt_lbl').setAttribute('y', 248);
-    // x(t) to the left of zp1, near its height
     document.getElementById('xt_lbl').setAttribute('x', x1 - 36);
     document.getElementById('xt_lbl').setAttribute('y', y1 + 4);
-    // x(t + Δt) above zp2
     document.getElementById('xttdt_lbl').setAttribute('x', x2 - 32);
     document.getElementById('xttdt_lbl').setAttribute('y', y2 - 10);
-    // Δx label right of the vertical brace tip
     document.getElementById('dx_lbl').setAttribute('x', x2 + 26);
     document.getElementById('dx_lbl').setAttribute('y', (y1+y2)/2 + 4);
   }
 
-  // Figure: piecewise-linear approximation -------------------
+  /* ── Piecewise-linear approximation ──────────────────────────────── */
   {
     const fn = t => 0.7*Math.sin(1.8*t) + 0.07*Math.pow(t,2) - 0.1*t + 0.6;
-    const t0 = 0, t1 = 6.4;   // 6.4 = 8 * 0.8 — exact division
+    const t0 = 0, t1 = 6.4;
     const W = 440, H = 160;
     const tx = t => (t - t0) * (W/(t1-t0));
     const ty = v => 160 - v * 32;
-
-    document.getElementById('refCurve').setAttribute('d',
-      pathFromFn(fn, t0, t1, 200, tx, ty));
-
-    // Wider dt so the piecewise approximation is visibly jagged
+    document.getElementById('refCurve').setAttribute('d', pathFromFn(fn, t0, t1, 200, tx, ty));
     const dt = 0.8;
-    let pts = '';
-    let ticks = '';
+    let pts = '', ticks = '';
     const sampleTs = [];
     for (let t = t0; t <= t1 + 1e-9; t += dt) {
       sampleTs.push(t);
@@ -666,8 +537,6 @@ To know the location \(x(b)\) itself, you still need to know \(x(a)\):</p>
     }
     document.getElementById('pieces').setAttribute('points', pts.trim());
     document.getElementById('dtTicks').innerHTML = ticks;
-
-    // Show a Δt brace on the 3rd segment (between sampleTs[2] and sampleTs[3])
     const k = 2;
     const xs = tx(sampleTs[k]), xe = tx(sampleTs[k+1]);
     document.getElementById('dtSegBrace').setAttribute('d', hBrace(xs, xe, 174, 5));
@@ -675,7 +544,7 @@ To know the location \(x(b)\) itself, you still need to know \(x(a)\):</p>
     document.getElementById('dtSegLbl').setAttribute('y', 200);
   }
 
-  // Figure: tangent at a point -------------------------------
+  /* ── Tangent at a point ───────────────────────────────────────────── */
   {
     const fn = t => 0.18*t*t + 0.15*t;
     const dfn = t => 0.36*t + 0.15;
@@ -683,48 +552,39 @@ To know the location \(x(b)\) itself, you still need to know \(x(a)\):</p>
     const W = 360, H = 130;
     const tx = t => (t - t0) * (W/(t1-t0));
     const ty = v => 150 - v * 12;
-
-    document.getElementById('tanCurve').setAttribute('d',
-      pathFromFn(fn, t0, t1, 100, tx, ty));
-
+    document.getElementById('tanCurve').setAttribute('d', pathFromFn(fn, t0, t1, 100, tx, ty));
     const tStar = 2.0;
-    const m_px  = -dfn(tStar) * 12 / (W/(t1-t0));   // px slope on screen
+    const m_px  = -dfn(tStar) * 12 / (W/(t1-t0));
     const x0px  = tx(tStar), y0px = ty(fn(tStar));
-    // draw line: extend left and right
     const dxL = 60, dxR = 220;
     const tl  = document.getElementById('tanLine');
     tl.setAttribute('x1', x0px - dxL);
     tl.setAttribute('y1', y0px - m_px*dxL);
     tl.setAttribute('x2', x0px + dxR);
     tl.setAttribute('y2', y0px + m_px*dxR);
-
     const pt = document.getElementById('tanPt');
     pt.setAttribute('cx', x0px); pt.setAttribute('cy', y0px);
     const tt = document.getElementById('tanTxt');
     tt.setAttribute('x', x0px - 4); tt.setAttribute('y', 168);
   }
 
-  // Figure: parabola (t-1)^2 - 1 -----------------------------
+  /* ── Parabola (t-1)^2 - 1 ────────────────────────────────────────── */
   {
     const fn = t => (t-1)*(t-1) - 1;
     const t0 = -0.7, t1 = 3.2;
-    // Coordinate frame: origin at translate(120,20); axes at y=160; t scale 50 px / unit, x scale 50 px / unit
     const tx = t => t * 50;
     const ty = v => 160 - v * 50;
-    document.getElementById('paraCurve').setAttribute('d',
-      pathFromFn(fn, t0, t1, 100, tx, ty));
+    document.getElementById('paraCurve').setAttribute('d', pathFromFn(fn, t0, t1, 100, tx, ty));
   }
 
-  // Figure: curve with a, b and displacement bracket ---------
+  /* ── Curve with a, b and displacement bracket ───────────────────── */
   {
     const fn = t => 0.5*Math.sin(1.4*t) + 0.05*t*t + 0.4*t + 0.2;
     const t0 = 0.2, t1 = 6.0;
     const W = 360, H = 160;
     const tx = t => (t - t0) * (W/(t1-t0));
     const ty = v => 180 - v * 20;
-    document.getElementById('abCurve').setAttribute('d',
-      pathFromFn(fn, t0, t1, 200, tx, ty));
-
+    document.getElementById('abCurve').setAttribute('d', pathFromFn(fn, t0, t1, 200, tx, ty));
     const tA = 1.2, tB = 4.6;
     const xA = tx(tA), yA = ty(fn(tA));
     const xB = tx(tB), yB = ty(fn(tB));
@@ -732,7 +592,6 @@ To know the location \(x(b)\) itself, you still need to know \(x(a)\):</p>
     document.getElementById('ptA').setAttribute('cy', yA);
     document.getElementById('ptB').setAttribute('cx', xB);
     document.getElementById('ptB').setAttribute('cy', yB);
-
     const ag = document.getElementById('ag');
     ag.setAttribute('x1', xA); ag.setAttribute('y1', yA);
     ag.setAttribute('x2', xA); ag.setAttribute('y2', 180);
@@ -742,19 +601,14 @@ To know the location \(x(b)\) itself, you still need to know \(x(a)\):</p>
     const hg = document.getElementById('hg');
     hg.setAttribute('x1', xA); hg.setAttribute('y1', yA);
     hg.setAttribute('x2', xB); hg.setAttribute('y2', yA);
-
     document.getElementById('aLbl').setAttribute('x', xA - 4);
     document.getElementById('aLbl').setAttribute('y', 198);
     document.getElementById('bLbl').setAttribute('x', xB - 4);
     document.getElementById('bLbl').setAttribute('y', 198);
-    // x(a) above point A
     document.getElementById('xaLbl').setAttribute('x', xA - 32);
     document.getElementById('xaLbl').setAttribute('y', yA - 8);
-    // x(b) above point B
     document.getElementById('xbLbl').setAttribute('x', xB - 32);
     document.getElementById('xbLbl').setAttribute('y', yB - 8);
-
-    // brace on the right side for x(b) - x(a)
     const bx = xB + 12;
     const top = yB, bot = yA;
     const mid = (top + bot)/2;
@@ -763,8 +617,238 @@ To know the location \(x(b)\) itself, you still need to know \(x(a)\):</p>
     document.getElementById('dispLbl').setAttribute('x', bx + 22);
     document.getElementById('dispLbl').setAttribute('y', mid + 4);
   }
+
+  /* ════════════════════════════════════════════════════════════════════
+     ANIMATION: 1D motion → x(t) curve
+     ════════════════════════════════════════════════════════════════════ */
+  (function() {
+    const canvas = document.getElementById('motionAnim');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+
+    /* Position function – same shape as original static figure */
+    const fn = t => 0.7 * Math.sin(2.5 * t) + 0.04 * t * t * t - 0.2 * t;
+
+    /* Animation period (seconds) – one full sweep of the x(t) graph */
+    const T      = 7;
+    /* Pause at end of each loop before resetting (seconds) */
+    const PAUSE  = 0.6;
+
+    /* ── Layout constants (canvas: 600 × 240) ────────────────────── */
+    // Left panel: vertical position axis
+    const LP = {
+      axX   : 62,    // canvas x of the axis line
+      top   : 16,    // axis top (canvas y)
+      bot   : 232,   // axis bottom (canvas y)
+      cenY  : 190,   // canvas y where x = 0  ← 原点を下寄りに
+      scale : 28,    // px per position unit
+    };
+    LP.toY = v => LP.cenY - v * LP.scale;
+
+    // Right panel: x(t) graph
+    const RP = {
+      ox    : 210,   // canvas x at t = 0
+      oy    : 190,   // canvas y at x = 0  ← 左パネルに合わせて下寄りに
+      maxX  : 588,   // canvas x at t = T
+      topY  : 14,    // top of x-axis
+      botY  : 232,   // bottom of x-axis
+      tScale: 0,     // computed below
+      xScale: 28,    // px per position unit (same as LP)
+    };
+    RP.tScale = (RP.maxX - RP.ox) / T;
+    RP.toX = t => RP.ox + t * RP.tScale;
+    RP.toY = v => RP.oy - v * RP.xScale;
+
+    /* ── Drawing helpers ────────────────────────────────────────── */
+    function arrowHead(ax, ay, angle, size) {
+      size = size || 7;
+      ctx.save();
+      ctx.fillStyle = '#222';
+      ctx.beginPath();
+      ctx.moveTo(ax, ay);
+      ctx.lineTo(ax - size * Math.cos(angle - 0.38), ay - size * Math.sin(angle - 0.38));
+      ctx.lineTo(ax - size * Math.cos(angle + 0.38), ay - size * Math.sin(angle + 0.38));
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function drawLeftPanel(tNow) {
+      const v = fn(tNow);
+      const dotY = LP.toY(v);
+
+      /* Axis line */
+      ctx.save();
+      ctx.strokeStyle = '#222';
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.moveTo(LP.axX, LP.bot);
+      ctx.lineTo(LP.axX, LP.top + 10);
+      ctx.stroke();
+      arrowHead(LP.axX, LP.top + 10, -Math.PI / 2);
+
+      /* Zero tick */
+      ctx.strokeStyle = '#999';
+      ctx.lineWidth = 0.8;
+      ctx.beginPath();
+      ctx.moveTo(LP.axX - 4, LP.cenY);
+      ctx.lineTo(LP.axX + 4, LP.cenY);
+      ctx.stroke();
+
+      /* x label */
+      ctx.font = 'italic 15px Cambria, "Times New Roman", serif';
+      ctx.fillStyle = '#1a1a1a';
+      ctx.textAlign = 'center';
+      ctx.fillText('x', LP.axX, LP.top + 4);
+
+      /* Ghost trail – last 1.4 s of positions */
+      const TRAIL_SEC  = 1.4;
+      const TRAIL_STEP = 60;
+      for (let i = TRAIL_STEP; i >= 1; i--) {
+        const tPast = tNow - i * TRAIL_SEC / TRAIL_STEP;
+        if (tPast < 0) continue;
+        const yPast = LP.toY(fn(tPast));
+        const alpha = Math.pow((TRAIL_STEP - i) / TRAIL_STEP, 1.5) * 0.35;
+        ctx.beginPath();
+        ctx.arc(LP.axX, yPast, 3.2, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(192,57,43,${alpha.toFixed(3)})`;
+        ctx.fill();
+      }
+
+      /* Current dot with glow */
+      ctx.beginPath();
+      ctx.arc(LP.axX, dotY, 7, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(192,57,43,0.18)';
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(LP.axX, dotY, 5, 0, Math.PI * 2);
+      ctx.fillStyle = '#c0392b';
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    function drawMiddleArrow() {
+      ctx.save();
+      ctx.strokeStyle = '#444';
+      ctx.fillStyle   = '#444';
+      ctx.lineWidth   = 1.5;
+      const x1 = 86, x2 = 200, y = 120;
+      ctx.beginPath();
+      ctx.moveTo(x1, y);
+      ctx.lineTo(x2 - 9, y);
+      ctx.stroke();
+      arrowHead(x2 - 2, y, 0, 7);
+
+      ctx.font = '12px Georgia, serif';
+      ctx.fillStyle   = '#333';
+      ctx.textAlign   = 'center';
+      ctx.fillText('unfold along time', (x1 + x2) / 2, y - 9);
+      ctx.restore();
+    }
+
+    function drawRightPanel(tNow) {
+      ctx.save();
+      /* Clip to right panel */
+      ctx.beginPath();
+      ctx.rect(RP.ox - 1, 5, canvas.width - RP.ox + 1, canvas.height - 10);
+      ctx.clip();
+
+      /* t-axis */
+      ctx.strokeStyle = '#222';
+      ctx.fillStyle   = '#222';
+      ctx.lineWidth   = 1.4;
+      ctx.beginPath();
+      ctx.moveTo(RP.ox, RP.oy);
+      ctx.lineTo(RP.maxX - 9, RP.oy);
+      ctx.stroke();
+      arrowHead(RP.maxX - 2, RP.oy, 0);
+
+      /* x-axis */
+      ctx.beginPath();
+      ctx.moveTo(RP.ox, RP.botY);
+      ctx.lineTo(RP.ox, RP.topY + 10);
+      ctx.stroke();
+      arrowHead(RP.ox, RP.topY + 10, -Math.PI / 2);
+
+      /* Axis labels */
+      ctx.font = 'italic 15px Cambria, "Times New Roman", serif';
+      ctx.textAlign = 'left';
+      ctx.fillText('t', RP.maxX - 5, RP.oy + 6);
+      ctx.textAlign = 'right';
+      ctx.fillText('x', RP.ox - 5, RP.topY + 16);
+
+      /* Traced curve up to tNow */
+      if (tNow > 0.005) {
+        const STEPS = 320;
+        const nDraw = Math.ceil(tNow / T * STEPS);
+        ctx.beginPath();
+        for (let i = 0; i <= nDraw; i++) {
+          const ti = tNow * i / nDraw;
+          const px = RP.toX(ti);
+          const py = RP.toY(fn(ti));
+          i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+        }
+        ctx.strokeStyle = '#1f4e8a';
+        ctx.lineWidth   = 2.3;
+        ctx.stroke();
+      }
+
+      /* Dashed guide lines from current point to axes */
+      const cx = RP.toX(tNow);
+      const cy = RP.toY(fn(tNow));
+      ctx.setLineDash([4, 3]);
+      ctx.strokeStyle = '#aaa';
+      ctx.lineWidth   = 1;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(cx, RP.oy);      /* drop to t-axis */
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(RP.ox, cy);      /* left to x-axis */
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      /* Current dot on the graph with glow */
+      ctx.beginPath();
+      ctx.arc(cx, cy, 6.5, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(192,57,43,0.18)';
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(cx, cy, 4.5, 0, Math.PI * 2);
+      ctx.fillStyle = '#c0392b';
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    /* ── Animation loop ──────────────────────────────────────────── */
+    let startTime = null;
+
+    function frame(ts) {
+      if (!startTime) startTime = ts;
+      const elapsed = (ts - startTime) / 1000;
+
+      /* Effective time within one cycle (including end-pause) */
+      const cycle   = elapsed % (T + PAUSE);
+      const tNow    = Math.min(cycle, T);  /* clamp during pause */
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      drawLeftPanel(tNow);
+      drawMiddleArrow();
+      drawRightPanel(tNow);
+
+      requestAnimationFrame(frame);
+    }
+
+    requestAnimationFrame(frame);
+  })();
+
 })();
 </script>
-
 </body>
 </html>
