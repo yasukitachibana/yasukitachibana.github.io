@@ -772,13 +772,6 @@ To know the location \(x(b)\) itself, you still need to know \(x(a)\):</p>
       ctx.stroke();
       arrowHead(RP.ox, RP.topY + 10, -Math.PI / 2);
 
-      /* Axis labels */
-      ctx.font = 'italic 15px Cambria, "Times New Roman", serif';
-      ctx.textAlign = 'left';
-      ctx.fillText('t', RP.maxX - 5, RP.oy + 6);
-      ctx.textAlign = 'right';
-      ctx.fillText('x', RP.ox - 5, RP.topY + 16);
-
       /* Traced curve up to tNow */
       if (tNow > 0.005) {
         const STEPS = 320;
@@ -823,6 +816,14 @@ To know the location \(x(b)\) itself, you still need to know \(x(a)\):</p>
       ctx.fill();
 
       ctx.restore();
+
+      /* Axis labels — drawn AFTER restore() so they are not clipped */
+      ctx.font = 'italic 15px Cambria, "Times New Roman", serif';
+      ctx.fillStyle = '#1a1a1a';
+      ctx.textAlign = 'left';
+      ctx.fillText('t', RP.maxX + 2, RP.oy + 5);   /* right of t-axis arrow */
+      ctx.textAlign = 'right';
+      ctx.fillText('x', RP.ox - 6, RP.topY + 16);  /* above x-axis arrow */
     }
 
     /* ── Animation loop ──────────────────────────────────────────── */
