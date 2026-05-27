@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Determining Motion II (in Classical Mechanics)</title>
+<title>Determining Motion (in Classical Mechanics)</title>
 <script>
   MathJax = {
     tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] },
@@ -14,7 +14,9 @@
   :root {
     --text:#1a1a1a; --muted:#666; --jp:#555;
     --bg:#fafafa; --card:#ffffff; --border:#dcdcdc;
-    --accent:#1f4e8a; --accent2:#c0392b; --accent3:#2a8a3e;
+    --accent:#1f4e8a; --accent2:#c0392b;
+    --note-bg:#fff8e7; --note-bd:#e0b400;
+    --fix-bg:#eef5ff; --fix-bd:#4a90e2;
   }
   * { box-sizing: border-box; }
   body {
@@ -23,8 +25,8 @@
     line-height: 1.65; color: var(--text); background: var(--bg);
   }
   header { border-bottom: 2px solid var(--text); margin-bottom: 28px; padding-bottom: 12px; }
-  h1 { font-size: 28px; margin: 0 0 4px; }
-  h1 .jp { display: block; font-size: 16px; color: var(--jp); font-style: italic; margin-top: 4px; font-weight: normal; }
+  h1 { font-size: 30px; margin: 0 0 4px; }
+  h1 .jp { display: block; font-size: 17px; color: var(--jp); font-style: italic; margin-top: 4px; font-weight: normal; }
   header .meta { color: var(--muted); font-size: 14.5px; margin-top: 6px; }
   h2 {
     font-size: 22px; margin: 40px 0 12px;
@@ -37,820 +39,814 @@
     border: 1.5px solid var(--text); padding: 14px 18px; margin: 16px 0;
     background: var(--card); border-radius: 4px;
   }
-  .recap {
-    background: #f4f7fb; border: 1px solid #c8d6e8; border-radius: 6px;
-    padding: 14px 18px; margin: 16px 0;
+  .keylist { list-style: none; padding-left: 4px; margin: 6px 0; }
+  .keylist li {
+    display: inline-block; min-width: 240px; border-bottom: 1px solid #bbb;
+    margin: 6px 8px 6px 0; padding: 4px 0; color: transparent;
   }
-  .recap ul { margin: 6px 0; padding-left: 22px; }
-  .recap li { margin: 4px 0; }
+  .keylist li::before { content: "•"; color: var(--text); margin-right: 8px; }
   figure { margin: 18px auto; text-align: center; }
   figcaption { font-size: 12.5px; color: var(--muted); margin-top: 4px; }
   svg { max-width: 100%; height: auto; }
-  canvas { display: block; margin: 0 auto; max-width: 100%; }
+  .note, .fix {
+    padding: 10px 14px; margin: 14px 0; font-size: 14.5px; border-radius: 4px;
+  }
+  .note { background: var(--note-bg); border-left: 4px solid var(--note-bd); }
+  .fix  { background: var(--fix-bg);  border-left: 4px solid var(--fix-bd); }
+  .note .tag, .fix .tag {
+    display: inline-block; font-weight: bold; margin-right: 6px;
+    font-size: 12px; padding: 1px 6px; border-radius: 3px; vertical-align: middle;
+  }
+  .note .tag { background: var(--note-bd); color: #fff; }
+  .fix  .tag { background: var(--fix-bd);  color: #fff; }
+  .yesbox {
+    display: inline-block; border: 2px solid var(--text);
+    padding: 1px 12px; font-weight: bold; margin-right: 8px;
+  }
   .underline { text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 3px; }
   hr.soft { border: none; border-top: 1px dashed #bbb; margin: 30px 0; }
   /* SVG styling */
   .axis      { stroke: #222; stroke-width: 1.2; fill: none; }
-  .ground    { stroke: #444; stroke-width: 1.5; fill: none; }
+  .tick      { stroke: #222; stroke-width: 1;   fill: none; }
   .curve     { stroke: var(--accent); stroke-width: 2.2; fill: none; }
+  .curve2    { stroke: var(--accent2); stroke-width: 2;  fill: none; }
+  .tangent   { stroke: #2a8a3e; stroke-width: 1.8; fill: none; }
+  .chord     { stroke: #c0392b; stroke-width: 1.6; fill: none; stroke-dasharray: 5 3; }
   .guide     { stroke: #888; stroke-width: 1; stroke-dasharray: 4 3; fill: none; }
+  .brace     { stroke: #555; stroke-width: 1.2; fill: none; }
   .pt        { fill: var(--accent2); }
+  .pt2       { fill: var(--accent);  }
   .lbl       { font: 13px Georgia, serif; fill: #1a1a1a; }
+  .lbl-jp    { font: 12px "Hiragino Mincho ProN","Yu Mincho",serif; fill: #555; font-style: italic; }
   .lbl-sm    { font: 11.5px Georgia, serif; fill: #555; }
   .lbl-math  { font: italic 14px "Cambria","Times New Roman",serif; fill: #1a1a1a; }
   .lbl-eq    { font: italic 12.5px "Cambria","Times New Roman",serif; fill: #222; }
   .lbl-eq-sm { font: italic 11.5px "Cambria","Times New Roman",serif; fill: #444; }
+  .arrow     { stroke: #222; stroke-width: 1.4; fill: #222; }
+
+  /* Animation canvas */
+  #motionAnim {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+    height: auto;
+    background: transparent;
+  }
 </style>
 </head>
 <body>
 <header>
-  <h1>Determining Motion II <span style="font-weight:normal;color:var(--muted);font-size:0.7em;">[in Classical Mechanics (古典力学)]</span>
+  <h1>Determining Motion I <span style="font-weight:normal;color:var(--muted);font-size:0.7em;">[in Classical Mechanics (古典力学)]</span>
   </h1>
   <div class="meta">IGS 200 &nbsp;·&nbsp;AY2026 Spring&nbsp;·&nbsp; Tachibana (GC)</div>
 </header>
-
 <!-- ============================================================ -->
-<h2>Review <span class="jp">(復習)</span></h2>
-<div class="recap">
-  <ul>
-    <li><strong>Determining motion</strong> = determining the <em>functional form</em> <span class="jp">(関数形)</span> of the location \(x(t)\) = knowing the value of the location at every time \(t\).</li>
-    <li><strong>Velocity</strong> <span class="jp">(速度)</span> is the <em>derivative</em> <span class="jp">(微分)</span> of \(x(t)\):
-        \(\;v(t) = \dfrac{dx(t)}{dt}\), so it can be obtained solely from \(x(t)\).</li>
-    <li><strong>Displacement</strong> is the <em>integral</em> of \(v(t)\):
-        \[
-          \int_{a}^{t} v(t')\,dt'
-          \;=\; \int_{a}^{t} \frac{dx(t')}{dt'}\,dt'
-          \;=\; \bigl[\,x(t')\,\bigr]_{t'=a}^{t'=t}
-          \;=\; x(t) - x(a).
-        \]
-        Therefore, <em>if \(x(a)\) is known</em>, one can obtain the location \(x(t)\) as
-        \[
-          \boxed{\;x(t) \;=\; x(a) \;+\; \int_{a}^{t} v(t')\,dt'\;}
-        \]
-    </li>
+<h2>The Question</h2>
+<div class="box">
+  When can we say
+  <ul style="margin:6px 0 6px 22px;">
+    <li>a motion is <em>fully determined</em>, <span class="jp">(運動を完全に定める)</span> or that</li>
+    <li>a given motion is <em>completely known</em>? <span class="jp">(与えられた運動を完全に知る)</span></li>
   </ul>
 </div>
+<!-- ============================================================ -->
+<h2>Determining Motion</h2>
+<h3>Setup: motions of <span class="underline">a point</span> <span class="jp">(点)</span></h3>
 <figure>
-  <svg viewBox="0 0 700 180" width="700" aria-label="recap diagrams">
+  <svg viewBox="0 0 460 100" width="460" aria-label="moving point P with trajectory arrow">
     <defs>
       <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
         <path d="M0,0 L10,5 L0,10 z" fill="#222"/>
       </marker>
     </defs>
-    <!-- Left: x(t) curve -->
-    <g transform="translate(50,20)">
-      <line x1="0" y1="120" x2="280" y2="120" class="axis" marker-end="url(#arr)"/>
-      <line x1="0" y1="150" x2="0"   y2="0"   class="axis" marker-end="url(#arr)"/>
-      <text x="270" y="140" class="lbl-math">t</text>
-      <text x="-12" y="-2"  class="lbl-math">x</text>
-      <path id="recap1" d="" class="curve"/>
-      <circle id="recap1pt" r="3.5" class="pt"/>
-      <line   id="recap1g1" x1="0" y1="0" x2="0" y2="0" class="guide"/>
-      <line   id="recap1g2" x1="0" y1="0" x2="0" y2="0" class="guide"/>
-      <text   id="recap1xa" x="-30" y="38" class="lbl-eq-sm">x(a)</text>
-      <text   id="recap1a"  x="190" y="138" class="lbl-eq-sm">a</text>
+    <circle cx="40" cy="60" r="5" class="pt"/>
+    <text x="22" y="50" class="lbl">P</text>
+    <path d="M 48,60 C 90,30 140,80 200,50 S 290,30 330,55" fill="none" stroke="#222" stroke-width="1.6" marker-end="url(#arr)"/>
+    <text x="345" y="45" class="lbl">moving point <tspan font-style="italic">P</tspan></text>
+    <text x="345" y="62" class="lbl-jp">(動く点 P)</text>
+  </svg>
+</figure>
+<p><strong>Why simplify to a point?</strong> &nbsp; To strip away internal structure — no rotation, no deformation, no internal degrees of freedom. The motion is then captured by a single position over time.</p>
+<figure>
+  <svg viewBox="0 0 460 140" width="460" aria-label="no rotation, no deformation">
+    <!-- No rotation -->
+    <g transform="translate(80,55)">
+      <circle r="32" fill="none" stroke="#222" stroke-width="1.6"/>
+      <circle r="2.5" fill="#222"/>
+      <path d="M 38,0 A 38,38 0 1,1 -38,0" fill="none" stroke="#222" stroke-width="1.4" marker-end="url(#arr)"/>
+      <text x="-50" y="-45" class="lbl">No rotation</text>
+      <text x="-30" y="60" class="lbl-jp">(回転なし)</text>
     </g>
-    <!-- Right: integral interpretation -->
-    <g transform="translate(380,20)">
-      <line x1="0" y1="120" x2="280" y2="120" class="axis" marker-end="url(#arr)"/>
-      <line x1="0" y1="150" x2="0"   y2="0"   class="axis" marker-end="url(#arr)"/>
-      <text x="270" y="140" class="lbl-math">t</text>
-      <text x="-12" y="-2"  class="lbl-math">x</text>
-      <path id="recap2" d="" class="curve"/>
-      <line   id="recap2g1" x1="0" y1="0" x2="0" y2="0" class="guide"/>
-      <line   id="recap2g2" x1="0" y1="0" x2="0" y2="0" class="guide"/>
-      <line   id="recap2h"  x1="0" y1="0" x2="0" y2="0" class="guide"/>
-      <circle id="recap2pa" r="3.5" class="pt"/>
-      <circle id="recap2pb" r="3.5" class="pt"/>
-      <text   id="recap2xa" x="-30" y="0"  class="lbl-eq-sm">x(a)</text>
-      <text   id="recap2xt" x="-30" y="0"  class="lbl-eq-sm">x(t)</text>
-      <text   id="recap2a"  x="0"   y="138" class="lbl-eq-sm">a</text>
-      <text   id="recap2t"  x="0"   y="138" class="lbl-eq-sm">t</text>
+    <!-- No deformation -->
+    <g transform="translate(320,55)">
+      <path d="M -28,-22 C -10,-34 22,-30 32,-10 C 38,8 24,28 6,30 C -16,32 -36,16 -34,-2 C -33,-12 -36,-15 -28,-22 Z"
+            fill="none" stroke="#222" stroke-width="1.6"/>
+      <text x="-50" y="-45" class="lbl">No deformation</text>
+      <text x="-30" y="60" class="lbl-jp">(変形なし)</text>
     </g>
   </svg>
 </figure>
+<p>The position changes along a line. If we lay out time horizontally, the same motion becomes a curve in the <span class="lbl-math">(t, x)</span>-plane:</p>
 
-<!-- ============================================================ -->
-<h3>[Example 1]</h3>
-<p>Let \(x(t) = t^3 + t^2 + t + 1\). The velocity is</p>
-\[
-  v(t) \;=\; \frac{dx(t)}{dt} \;=\; 3t^2 + 2t + 1.
-\]
-<p>In particular, at \(t = 1\),</p>
-\[
-  v(1) \;=\; 3 + 2 + 1 \;=\; \underline{\,6\,}.
-\]
+<!-- ═══════════════════════════════════════════════════════════════
+     ANIMATED FIGURE: 1D motion → x(t) curve
+     Left panel : point moving along vertical position axis
+     Right panel: x(t) curve traced in real-time
+     ═══════════════════════════════════════════════════════════════ -->
+<figure>
+  <canvas id="motionAnim" width="600" height="240"
+          aria-label="Animation: 1D motion unfolded over time into x(t) graph"></canvas>
+</figure>
 
+<div class="box" style="text-align:center; font-size:15.5px;">
+  If you can draw this <span class="lbl-math">x(t)</span> curve, you know every <em>kinematic</em> quantity of the motion.
+</div>
+<h3>When can you draw this graph?</h3>
+<p>You need to know the value of <span class="lbl-math">x</span> (position) for all <span class="lbl-math">t</span> (time). Mathematically, \(x(t)\) is a <em>function</em> of \(t\) <span class="jp">(関数)</span>; we need its functional form <span class="jp">(関数形)</span>.</p>
+<h3>Example: \(x(t) = t + 1\)</h3>
+<figure>
+  <svg viewBox="0 0 460 240" width="460" aria-label="x(t) = t + 1">
+    <g transform="translate(110,20)">
+      <line x1="-90" y1="160" x2="290" y2="160" class="axis" marker-end="url(#arr)"/>
+      <line x1="0"   y1="220" x2="0"   y2="0"   class="axis" marker-end="url(#arr)"/>
+      <text x="280" y="180" class="lbl-math">t</text>
+      <text x="-14" y="-2"  class="lbl-math">x</text>
+      <!-- the line x = t + 1 ; scale: 40 px on t, 30 px on x; slope must be -30/40 = -0.75 px/px -->
+      <line x1="-80" y1="190" x2="270" y2="-72.5" class="curve"/>
+      <!-- intercept points -->
+      <circle cx="0"  cy="130" r="3.5" class="pt"/>  <!-- (0,1) -->
+      <text  x="6"   y="125" class="lbl-sm">1</text>
+      <text  x="-46" y="178" class="lbl-sm">−1</text>
+      <!-- evaluation at t=2.3 -->
+      <line x1="92" y1="160" x2="92" y2="61" class="guide"/>
+      <line x1="0"  y1="61"  x2="92" y2="61" class="guide"/>
+      <circle cx="92" cy="61" r="3.5" class="pt"/>
+      <text x="76" y="178" class="lbl-sm">2.3</text>
+      <text x="100" y="56" class="lbl-eq">x = 2.3 + 1 = <tspan text-decoration="underline" font-weight="bold">3.3</tspan></text>
+    </g>
+  </svg>
+</figure>
+<p>You can tell the location of <em>P</em> at every time.</p>
+<hr class="soft">
 <!-- ============================================================ -->
-<h3>[Example 2]</h3>
-<p>Let \(\;v(t) = t^3 + t^2 + t + 1\;\) and suppose the location at \(t = 0\) is \(x(0) = 1\).</p>
-\[
-\begin{aligned}
-  x(t)
-   &= x(0) + \int_{0}^{t} v(t')\,dt' \\[2pt]
-   &= 1 + \left[\,\tfrac{1}{4}t'^4 + \tfrac{1}{3}t'^3 + \tfrac{1}{2}t'^2 + t'\,\right]_{t'=0}^{t'=t} \\[2pt]
-   &= 1 + \tfrac{1}{4}t^4 + \tfrac{1}{3}t^3 + \tfrac{1}{2}t^2 + t.
-\end{aligned}
-\]
-<p>In particular, at \(t = 1\),</p>
-\[
-  x(1) \;=\; 1 + \tfrac{1}{4} + \tfrac{1}{3} + \tfrac{1}{2} + 1
-        \;=\; \frac{12 + 3 + 4 + 6 + 12}{12}
-        \;=\; \underline{\;\tfrac{37}{12}\;}.
-\]
-
-<!-- ============================================================ -->
-<h2>Acceleration <span class="jp">(加速度)</span></h2>
-<p>The <strong>acceleration</strong> is the derivative of velocity:</p>
-\[
-  \boxed{\;a(t) \;=\; \frac{dv(t)}{dt}
-                 \;=\; \frac{d}{dt}\!\left(\frac{dx(t)}{dt}\right)
-                 \;=\; \frac{d^{2}x(t)}{dt^{2}}\;}
-\]
-<p>As with the position-velocity relation, going the other way uses integration. Given the acceleration and an initial velocity \(v(t_0)\),</p>
-\[
-  v(t) \;=\; v(t_0) \;+\; \int_{t_0}^{t} a(t')\,dt'.
-\]
-
-<!-- ============================================================ -->
-<h2>The equation of motion <span class="jp">(運動方程式)</span></h2>
-<p>What causes acceleration? In classical mechanics the answer is Newton's second law:</p>
+<h2>Velocity <span class="jp">(速度)</span></h2>
+<p>Can \(x(t)\) tell the speed or velocity of the motion?</p>
+<p><span class="yesbox">Yes!</span> But how?</p>
+<p>Reminder: <strong>velocity</strong> is a signed quantity (in 1D the sign indicates direction); <strong>speed</strong> is its magnitude: \(\;\text{speed} = |\text{velocity}|.\)</p>
+<h3>Start with constant velocity \(v\) <span class="jp">(速度一定)</span></h3>
+<figure>
+  <svg viewBox="0 0 460 270" width="460" aria-label="constant velocity line">
+    <g transform="translate(60,20)">
+      <line x1="-10" y1="180" x2="370" y2="180" class="axis" marker-end="url(#arr)"/>
+      <line x1="0"   y1="220" x2="0"   y2="0"   class="axis" marker-end="url(#arr)"/>
+      <text x="360" y="200" class="lbl-math">t</text>
+      <text x="-14" y="-2"  class="lbl-math">x</text>
+      <text x="-14" y="194" class="lbl-sm">0</text>
+      <!-- line slope = 0.55 -->
+      <line x1="-5" y1="183" x2="345" y2="-10" class="curve"/>
+      <!-- two points -->
+      <circle cx="80"  cy="135" r="3.5" class="pt"/>
+      <circle cx="240" cy="47"  r="3.5" class="pt"/>
+      <line x1="80"  y1="180" x2="80"  y2="135" class="guide"/>
+      <line x1="240" y1="180" x2="240" y2="47"  class="guide"/>
+      <line x1="80"  y1="135" x2="240" y2="135" class="guide"/>
+      <!-- t labels under the dropped guide lines -->
+      <text x="76"  y="196" class="lbl-eq-sm">t</text>
+      <text x="218" y="196" class="lbl-eq-sm">t + Δt</text>
+      <!-- Δt brace -->
+      <path d="M 80,205 q 0,8 8,8 h 64 q 8,0 8,8 q 0,-8 8,-8 h 64 q 8,0 8,-8" class="brace"/>
+      <text x="155" y="232" class="lbl-eq">Δt</text>
+      <!-- Δx brace -->
+      <path d="M 254,135 q 8,0 8,8 v 36 q 0,8 8,8 q -8,0 -8,8 v 36 q 0,8 -8,8"
+            transform="translate(0,-92)" class="brace"/>
+      <text x="280" y="92" class="lbl-eq">Δx = v · Δt</text>
+    </g>
+  </svg>
+</figure>
 <div class="box" style="text-align:center;">
-  \(\displaystyle \boxed{\;m\,a(t) \;=\; F\;}\)
-  &nbsp;&nbsp;
-  <span class="lbl-sm">
-    \(m\) : mass <span class="jp">(質量)</span>,
-    \(F\) : force <span class="jp">(力)</span>
-  </span>
+  The slope <span class="jp">(傾き)</span> of the line equals the velocity \(v\).
 </div>
+<p>For a non-linear curve, the velocity changes over time. Zoom in on a small interval near time \(t\): the curve is well-approximated by the chord from \( (t, x(t)) \) to \( (t+\Delta t,\; x(t+\Delta t)) \).</p>
 <figure>
-  <svg viewBox="0 0 360 90" width="360" aria-label="mass with force arrow">
-    <g transform="translate(40,45)">
-      <circle cx="40" cy="0" r="8" fill="#333"/>
-      <text x="32" y="26" class="lbl-eq">m</text>
-      <line x1="55" y1="0" x2="200" y2="0" stroke="#c0392b" stroke-width="2" marker-end="url(#arr)"/>
-      <text x="210" y="6" class="lbl-eq">F</text>
+  <svg viewBox="0 0 820 290" width="820" aria-label="general curve with zoomed chord">
+    <!-- left panel: wavy curve -->
+    <g transform="translate(20,20)">
+      <line x1="0" y1="200" x2="300" y2="200" class="axis" marker-end="url(#arr)"/>
+      <line x1="0" y1="230" x2="0"   y2="0"   class="axis" marker-end="url(#arr)"/>
+      <text x="290" y="220" class="lbl-math">t</text>
+      <text x="-14" y="-2"  class="lbl-math">x</text>
+      <path id="wave1" d="" class="curve"/>
+      <!-- region of interest (placed dynamically by JS) -->
+      <circle id="roiCircle" r="18" fill="none" stroke="#c0392b" stroke-width="1.4" stroke-dasharray="4 3"/>
+      <line   id="roiArrow"  stroke="#888" stroke-width="1.2" stroke-dasharray="3 3" marker-end="url(#arr)"/>
+      <text   id="roiText"   class="lbl-sm">zoom in around this time</text>
     </g>
-  </svg>
-</figure>
-<p>Equivalently,</p>
-\[
-  a(t) \;=\; \frac{F}{m}.
-\]
-<div class="box">
-  Acceleration is driven by force <span class="jp">(力がかかると加速度が生じる)</span>.<br>
-  In a physics problem we determine the motion of an object when a force is applied to it
-  <span class="jp">(力がかかっている時の運動を決定する)</span>.
-</div>
-
-<!-- ============================================================ -->
-<h2>In a gravitational field <span class="jp">(重力場)</span></h2>
-<p>Near the Earth's surface, every object of mass \(m\) experiences a downward gravitational force. Choose the \(x\)-axis to point <em>upward</em>; then the force is</p>
-<figure>
-  <svg viewBox="0 0 460 200" width="460" aria-label="mass in gravity">
-    <g transform="translate(80,15)">
-      <line x1="0" y1="180" x2="0" y2="0" class="axis" marker-end="url(#arr)"/>
+    <!-- right panel: zoom view -->
+    <g transform="translate(380,20)">
+      <line x1="0" y1="200" x2="370" y2="200" class="axis" marker-end="url(#arr)"/>
       <text x="-14" y="-2" class="lbl-math">x</text>
-      <circle cx="20" cy="60" r="9" fill="#333"/>
-      <text x="-2" y="56" class="lbl-eq">m</text>
-      <line x1="20" y1="75" x2="20" y2="135" stroke="#c0392b" stroke-width="2" marker-end="url(#arr)"/>
-      <text x="32" y="115" class="lbl-eq">−mg &nbsp;(= F)</text>
-      <text x="170" y="60" class="lbl">g = 9.8 m/s² &nbsp;(gravitational acceleration)</text>
-      <text x="170" y="80" class="lbl-jp">(重力加速度)</text>
+      <text x="362" y="220" class="lbl-math">t</text>
+      <path id="wave1zoom" d="" class="curve"/>
+      <line id="chord1" x1="0" y1="0" x2="0" y2="0" class="chord"/>
+      <circle id="zp1" r="3.5" class="pt"/>
+      <circle id="zp2" r="3.5" class="pt"/>
+      <line id="dt_v1" x1="0" y1="0" x2="0" y2="0" class="guide"/>
+      <line id="dt_v2" x1="0" y1="0" x2="0" y2="0" class="guide"/>
+      <line id="dt_hg" x1="0" y1="0" x2="0" y2="0" class="guide"/>
+      <path id="dt_brace" d="" class="brace"/>
+      <path id="dx_brace" d="" class="brace"/>
+      <text id="t_lbl"     class="lbl-eq-sm">t</text>
+      <text id="ttdt_lbl"  class="lbl-eq-sm">t + Δt</text>
+      <text id="dt_lbl"    class="lbl-eq">Δt</text>
+      <text id="xt_lbl"    class="lbl-eq-sm">x(t)</text>
+      <text id="xttdt_lbl" class="lbl-eq-sm">x(t + Δt)</text>
+      <text id="dx_lbl"    class="lbl-eq">Δx</text>
+    </g>
+  </svg>
+</figure>
+<p style="text-align:center;" class="lbl-sm">
+  where &nbsp; \(\Delta t = (t+\Delta t) - t,\quad \Delta x = x(t+\Delta t) - x(t)\).
+</p>
+<p>The slope of this chord <em>approximates</em> the velocity:</p>
+\[
+  v_{\text{approx}} \;=\; \text{slope} \;=\; \frac{\Delta x}{\Delta t}
+                 \;=\; \frac{x(t+\Delta t) - x(t)}{\Delta t}
+\]
+<p>Both \(x(t+\Delta t)\) and \(x(t)\) are known once the function \(x(t)\) is known.</p>
+<h3>Reproducing the original curve</h3>
+<p>Replace the curve by line segments of width \(\Delta t\). The smaller \(\Delta t\), the better the polyline matches the curve at every point.</p>
+<figure>
+  <svg viewBox="0 0 500 240" width="500" aria-label="piecewise linear approximation">
+    <g transform="translate(30,20)">
+      <line x1="0" y1="160" x2="450" y2="160" class="axis" marker-end="url(#arr)"/>
+      <line x1="0" y1="190" x2="0"   y2="0"   class="axis" marker-end="url(#arr)"/>
+      <text x="440" y="180" class="lbl-math">t</text>
+      <text x="-14" y="-2"  class="lbl-math">x</text>
+      <!-- smooth reference (faded) -->
+      <path id="refCurve" d="" class="curve" stroke-opacity="0.45"/>
+      <!-- piecewise -->
+      <polyline id="pieces" points="" class="curve2"/>
+      <g id="dtTicks"></g>
+      <!-- dt brace showing one segment width -->
+      <path id="dtSegBrace" d="" class="brace"/>
+      <text id="dtSegLbl" class="lbl-eq">Δt</text>
+    </g>
+  </svg>
+</figure>
+<div class="box" style="text-align:center;">
+  Take the limit &nbsp; \(\boxed{\;\Delta t \to 0\;}\) &nbsp; to recover the curve exactly.
+</div>
+<p>In the limit, the chord becomes the <em>tangent line</em> <span class="jp">(接線)</span>, whose slope is the instantaneous velocity:</p>
+<figure>
+  <svg viewBox="0 0 460 200" width="460" aria-label="tangent at a point">
+    <g transform="translate(40,20)">
+      <line x1="0" y1="150" x2="380" y2="150" class="axis" marker-end="url(#arr)"/>
+      <text x="370" y="170" class="lbl-math">t</text>
+      <path id="tanCurve" d="" class="curve"/>
+      <line id="tanLine"  x1="0" y1="0" x2="0" y2="0" class="tangent"/>
+      <circle id="tanPt" r="3.5" class="pt"/>
+      <text id="tanTxt" class="lbl-eq-sm">t</text>
+      <text x="240" y="50" class="lbl">tangent line <span class="jp">(接線)</span></text>
     </g>
   </svg>
 </figure>
 \[
-  F \;=\; -m g, \qquad
-  g \;\approx\; 9.8\ \text{m/s}^{2}.
+  \boxed{\;v(t) \;=\; \lim_{\Delta t \to 0}\frac{x(t+\Delta t) - x(t)}{\Delta t}
+            \;=\; \frac{dx(t)}{dt} \;=\; x'(t)\;}
 \]
-<p>Substituting into the equation of motion,</p>
+<p style="text-align:center;"><span class="lbl-sm">derivative of \(x\) &nbsp;<span class="jp">(微分)</span></span></p>
+<p>This is <em>defined</em> as the <span class="underline">true</span> velocity of the motion.</p>
+<h3>Summary</h3>
+<div class="box" style="text-align:left;">
+<ul>
+  <li>Velocity is the derivative of \(x(t)\) <span class="jp">(微分)</span>, thus</li>
+  <li>Velocity can be obtained from \(x(t)\) by differentiation.</li>
+</ul>
 \[
-  m\,a(t) \;=\; -m g
-  \quad\Longrightarrow\quad
-  \boxed{\;a(t) \;=\; -g\;}
+  v(t) \;=\; \frac{dx(t)}{dt} \;=\; \lim_{\Delta t \to 0}\frac{x(t+\Delta t) - x(t)}{\Delta t}
 \]
-<p>i.e. a <em>constant</em> acceleration <span class="jp">(定数)</span>, independent of the mass \(m\).</p>
-
-<!-- ============================================================ -->
-<h3>[Example 1] &nbsp; Free fall from height <i>h</i></h3>
-
-<!-- ═══ ANIMATED CANVAS: Example 1 ═══ -->
-<figure>
-  <canvas id="ex1Canvas" width="540" height="250"
-          aria-label="Animation: free fall — ball falling and x(t) curve"></canvas>
-</figure>
-
-<p>A particle is released from rest at height \(h\). Setting \(t_0 = 0\),</p>
-\[
-  x(0) = h, \qquad v(0) = 0, \qquad a(t) = -g.
-\]
-<p>Integrate the acceleration to get the velocity:</p>
-\[
-\begin{aligned}
-  v(t)
-   &= v(0) + \int_{0}^{t} a(t')\,dt'
-    = 0 + \int_{0}^{t} (-g)\,dt' \\
-   &= \bigl[\,-g\,t'\,\bigr]_{0}^{t}
-    = -g\,t.
-\end{aligned}
-\]
-<p>Integrate the velocity to get the position:</p>
-\[
-\begin{aligned}
-  x(t)
-   &= x(0) + \int_{0}^{t} v(t')\,dt'
-    = h + \int_{0}^{t} (-g\,t')\,dt' \\
-   &= h - \tfrac{1}{2}g\,t^{2}.
-\end{aligned}
-\]
-<h3>Time to hit the ground &nbsp; <span class="lbl-sm">(着地時刻)</span></h3>
-<p>The ball lands when \(x(t^{*}) = 0\):</p>
-\[
-  h - \tfrac{1}{2}g\,t^{*\,2} = 0
-  \;\;\Longrightarrow\;\;
-  t^{*} \;=\; \sqrt{\,\tfrac{2h}{g}\,}.
-\]
-<p>The speed at impact is</p>
-\[
-  |\,v(t^{*})\,| \;=\; g\,t^{*} \;=\; \sqrt{\,2gh\,}.
-\]
-
-<!-- ============================================================ -->
-<h3>[Example 2] &nbsp; Thrown upward from the ground</h3>
-
-<!-- ═══ ANIMATED CANVAS: Example 2 ═══ -->
-<figure>
-  <canvas id="ex2Canvas" width="540" height="250"
-          aria-label="Animation: throw upward — ball and x(t) parabola"></canvas>
-</figure>
-
-<p>The ball is thrown up from ground level with initial speed \(v_0\). Setting \(t_0 = 0\),</p>
-\[
-  x(0) = 0, \qquad v(0) = v_0, \qquad a(t) = -g.
-\]
-<p>Velocity:</p>
-\[
-  v(t) \;=\; v(0) + \int_{0}^{t}(-g)\,dt'
-        \;=\; v_0 - g\,t.
-\]
-<p>Position:</p>
-\[
-\begin{aligned}
-  x(t)
-   &= x(0) + \int_{0}^{t} v(t')\,dt'
-    = 0 + \int_{0}^{t} (v_0 - g\,t')\,dt' \\
-   &= \left[\,v_0\,t' - \tfrac{1}{2}g\,t'^{\,2}\,\right]_{0}^{t}
-    = v_0\,t - \tfrac{1}{2}g\,t^{2}.
-\end{aligned}
-\]
-<p>Completing the square reveals the parabola's vertex:</p>
-\[
-  x(t) \;=\; -\tfrac{1}{2}g\!\left(t - \tfrac{v_0}{g}\right)^{\!2}
-              + \frac{v_0^{\,2}}{2g}.
-\]
-<p>The maximum height \(\,x_{\max} = \dfrac{v_0^{\,2}}{2g}\,\) is reached at \(\,t_{\text{top}} = \dfrac{v_0}{g}\,\), and the ball returns to the ground at \(\,t_{\text{return}} = \dfrac{2v_0}{g}\,\) by symmetry.</p>
-
-<!-- ============================================================ -->
-<h2>Summary</h2>
-<div class="recap">
-  <ul>
-    <li>Acceleration is the derivative of velocity, equivalently the second derivative of position:
-        \(\;a(t) = \dfrac{dv}{dt} = \dfrac{d^2 x}{dt^2}.\)</li>
-    <li>The <strong>equation of motion</strong> is Newton's second law: \(\;m\,a(t) = F\). Force drives acceleration.</li>
-    <li>In a gravitational field the force is \(F = -mg\), so \(a(t) = -g\) — a constant, independent of mass.</li>
-    <li>Two integrations give \(v(t)\) then \(x(t)\). Two initial conditions \(x(0)\) and \(v(0)\) are required to determine the motion completely.</li>
-  </ul>
 </div>
+<h3>Example</h3>
+<p>Let \(x(t) = (t-1)^2 - 1\). Find the velocity at \(t = \tfrac{5}{2}\).</p>
+<figure>
+  <svg viewBox="0 0 460 240" width="460" aria-label="parabola example">
+    <g transform="translate(120,20)">
+      <line x1="-100" y1="160" x2="280" y2="160" class="axis" marker-end="url(#arr)"/>
+      <line x1="0"    y1="220" x2="0"   y2="0"   class="axis" marker-end="url(#arr)"/>
+      <text x="270" y="180" class="lbl-math">t</text>
+      <text x="-14" y="-2"  class="lbl-math">x</text>
+      <path id="paraCurve" d="" class="curve"/>
+      <!-- Vertex (1,-1): tx(1)=50, ty(-1)=160-(-1)*50=210 -->
+      <circle cx="50"  cy="210" r="3.5" class="pt"/>
+      <text x="56"  y="228" class="lbl-sm">(1, −1)</text>
+      <!-- (5/2, 5/4): tx(5/2)=125, ty(5/4)=160-1.25*50=97.5 -->
+      <circle cx="125" cy="97.5" r="3.5" class="pt"/>
+      <line   x1="125" y1="160" x2="125" y2="97.5" class="guide"/>
+      <text   x="117"  y="178" class="lbl-sm">5/2</text>
+    </g>
+  </svg>
+</figure>
+\[
+  v(t) \;=\; \frac{dx}{dt}
+        \;=\; \bigl[(t-1)^2 - 1\bigr]'
+        \;=\; (t^2 - 2t)'
+        \;=\; 2t - 2
+\]
+\[
+  v\!\left(\tfrac{5}{2}\right) \;=\; 2 \cdot \tfrac{5}{2} - 2 \;=\; 5 - 2 \;=\; \underline{\,3\,}
+\]
+<!-- ============================================================ -->
+<h2>From velocity back to position</h2>
+<p>Velocity is obtained by differentiating \(x(t)\). Can we recover \(x(t)\) from the functional form of velocity \(v(t)\)?</p>
+<p>▶ Integration is the inverse operation of differentiation <span class="jp">(積分 — 微分の逆操作)</span>:</p>
+\[
+  \int_{a}^{b} \frac{dx(t)}{dt}\,dt
+  \;=\; \bigl[\,x(t)\,\bigr]_{a}^{b}
+  \;=\; x(b) - x(a)
+\]
+<p class="lbl-sm" style="text-align:center;">(this is the fundamental theorem of calculus)</p>
+<figure>
+  <svg viewBox="0 0 620 240" width="620" aria-label="curve with displacement bracket">
+    <g transform="translate(40,20)">
+      <line x1="0" y1="180" x2="380" y2="180" class="axis" marker-end="url(#arr)"/>
+      <text x="370" y="200" class="lbl-math">t</text>
+      <path id="abCurve" d="" class="curve"/>
+      <circle id="ptA" r="3.5" class="pt"/>
+      <circle id="ptB" r="3.5" class="pt"/>
+      <line id="ag" x1="0" y1="0" x2="0" y2="0" class="guide"/>
+      <line id="bg" x1="0" y1="0" x2="0" y2="0" class="guide"/>
+      <line id="hg" x1="0" y1="0" x2="0" y2="0" class="guide"/>
+      <text id="aLbl"  class="lbl-eq-sm">a</text>
+      <text id="bLbl"  class="lbl-eq-sm">b</text>
+      <text id="xaLbl" class="lbl-eq-sm">x(a)</text>
+      <text id="xbLbl" class="lbl-eq-sm">x(b)</text>
+      <path id="dispBrace" d="" class="brace"/>
+      <text id="dispLbl"   class="lbl-eq">displacement = x(b) − x(a)</text>
+    </g>
+  </svg>
+</figure>
+<p>Only the displacement \(x(b) - x(a)\) can be obtained from the integral.
+To know the location \(x(b)\) itself, you still need to know \(x(a)\):</p>
+\[
+  x(b) \;=\; \bigl(x(b) - x(a)\bigr) + x(a)
+        \;=\; \int_{a}^{b} v(t)\,dt \;+\; \underline{\,x(a)\,}
+\]
+<!-- ============================================================ -->
+<h3>Summary</h3>
+<div class="box" style="text-align:left;">
+<ul>
+  <li>Displacement is the integral of \(v(t)\).</li>
+  <li>To determine the <em>location</em>, knowing the velocity \(v(t)\) is <strong>not enough</strong> — you also need an initial position.</li>
+</ul>
+\[
+  x(b) - x(a) \;=\; \int_{a}^{b} v(t)\,dt
+\]
+</div>
+<h3>Example</h3>
+<p>Given \(v(t) = 2(t-1)\) and \(\boxed{\,x(1) = -1\,}\), find \(x(t=2)\).</p>
+\[
+\begin{aligned}
+  x(2) - x(1)
+    &= \int_{1}^{2} v(t)\,dt
+     = \int_{1}^{2} (2t - 2)\,dt \\
+    &= \bigl[\,t^2 - 2t\,\bigr]_{1}^{2}
+     = (2^2 - 2\!\cdot\!2) - (1^2 - 2\!\cdot\!1) \\
+    &= 0 - (-1) \;=\; 1
+\end{aligned}
+\]
+\[
+  x(2) \;=\; x(1) + 1 \;=\; -1 + 1 \;=\; \underline{\,0\,}
+\]
 
 <!-- ====================================================================
-     JavaScript
+     JavaScript: static SVG figures + animation
      ==================================================================== -->
 <script>
 (function() {
-  /* ── Helpers for static SVG figures ────────────────────────────── */
+  /* ── Helpers ──────────────────────────────────────────────────────── */
   function pathFromFn(fn, t0, t1, n, toX, toY) {
     let d = '';
     for (let i = 0; i <= n; i++) {
       const t = t0 + (t1 - t0) * i / n;
-      d += (i === 0 ? 'M' : 'L') + toX(t).toFixed(2) + ',' + toY(fn(t)).toFixed(2) + ' ';
+      const px = toX(t).toFixed(2);
+      const py = toY(fn(t)).toFixed(2);
+      d += (i === 0 ? 'M' : 'L') + px + ',' + py + ' ';
     }
     return d;
   }
-
-  /* ── Recap left ─────────────────────────────────────────────────── */
-  {
-    const fn = t => 0.7*Math.sin(1.6*t) + 0.04*t*t*t - 0.1*t + 1.0;
-    const t0 = 0, t1 = 5.2;
-    const tx = t => (t-t0)*(260/(t1-t0));
-    const ty = v => 120 - v*16;
-    document.getElementById('recap1').setAttribute('d', pathFromFn(fn, t0, t1, 120, tx, ty));
-    const a = 4.5;
-    const xa = tx(a), ya = ty(fn(a));
-    document.getElementById('recap1pt').setAttribute('cx', xa);
-    document.getElementById('recap1pt').setAttribute('cy', ya);
-    const g1 = document.getElementById('recap1g1');
-    g1.setAttribute('x1', 0); g1.setAttribute('y1', ya); g1.setAttribute('x2', xa); g1.setAttribute('y2', ya);
-    const g2 = document.getElementById('recap1g2');
-    g2.setAttribute('x1', xa); g2.setAttribute('y1', ya); g2.setAttribute('x2', xa); g2.setAttribute('y2', 120);
-    document.getElementById('recap1xa').setAttribute('x', -28);
-    document.getElementById('recap1xa').setAttribute('y', ya + 4);
-    document.getElementById('recap1a').setAttribute('x', xa - 4);
-    document.getElementById('recap1a').setAttribute('y', 138);
+  function hBrace(xs, xe, y, d) {
+    d = d || 6;
+    const xm = (xs + xe) / 2;
+    const w1 = xm - xs - 2*d;
+    const w2 = xe - xm - 2*d;
+    return `M ${xs},${y} q 0,${d} ${d},${d} h ${w1} q ${d},0 ${d},${d} q 0,${-d} ${d},${-d} h ${w2} q ${d},0 ${d},${-d}`;
+  }
+  function vBrace(x, yTop, yBottom, d) {
+    d = d || 6;
+    const ym = (yTop + yBottom) / 2;
+    const h1 = ym - yTop - 2*d;
+    const h2 = yBottom - ym - 2*d;
+    return `M ${x},${yTop} q ${d},0 ${d},${d} v ${h1} q 0,${d} ${d},${d} q ${-d},0 ${-d},${d} v ${h2} q 0,${d} ${-d},${d}`;
   }
 
-  /* ── Recap right ────────────────────────────────────────────────── */
+  /* ── Wavy curve + zoom ─────────────────────────────────────────────── */
   {
-    const fn = t => 0.4*Math.sin(1.4*t) + 0.08*t*t + 0.2*t + 1.0;
-    const t0 = 0, t1 = 5.2;
-    const tx = t => (t-t0)*(260/(t1-t0));
-    const ty = v => 120 - v*16;
-    document.getElementById('recap2').setAttribute('d', pathFromFn(fn, t0, t1, 120, tx, ty));
-    const a = 1.0, b = 4.2;
-    const xa = tx(a), ya = ty(fn(a));
-    const xb = tx(b), yb = ty(fn(b));
-    document.getElementById('recap2pa').setAttribute('cx', xa); document.getElementById('recap2pa').setAttribute('cy', ya);
-    document.getElementById('recap2pb').setAttribute('cx', xb); document.getElementById('recap2pb').setAttribute('cy', yb);
-    document.getElementById('recap2g1').setAttribute('x1', 0); document.getElementById('recap2g1').setAttribute('y1', ya);
-    document.getElementById('recap2g1').setAttribute('x2', xa); document.getElementById('recap2g1').setAttribute('y2', ya);
-    document.getElementById('recap2g2').setAttribute('x1', 0); document.getElementById('recap2g2').setAttribute('y1', yb);
-    document.getElementById('recap2g2').setAttribute('x2', xb); document.getElementById('recap2g2').setAttribute('y2', yb);
-    document.getElementById('recap2h').setAttribute('x1', xa); document.getElementById('recap2h').setAttribute('y1', ya);
-    document.getElementById('recap2h').setAttribute('x2', xa); document.getElementById('recap2h').setAttribute('y2', 120);
-    document.getElementById('recap2xa').setAttribute('x', -28); document.getElementById('recap2xa').setAttribute('y', ya + 4);
-    document.getElementById('recap2xt').setAttribute('x', -28); document.getElementById('recap2xt').setAttribute('y', yb + 4);
-    document.getElementById('recap2a').setAttribute('x', xa - 4); document.getElementById('recap2a').setAttribute('y', 138);
-    document.getElementById('recap2t').setAttribute('x', xb - 4); document.getElementById('recap2t').setAttribute('y', 138);
+    const fn = t => 0.6*Math.sin(2.2*t) + 0.06*Math.pow(t,3) - 0.3*t + 1.2;
+    const t0 = 0.2, t1 = 5.0;
+    const W = 300, H = 200;
+    const tx = t => (t - t0) * (W/(t1-t0));
+    const ty = v => H - v * 22;
+    document.getElementById('wave1').setAttribute('d', pathFromFn(fn, t0, t1, 240, tx, ty));
+    const tStar = 4.0, dt = 0.8;
+    const cX = tx(tStar), cY = ty(fn(tStar));
+    const rRoi = 18;
+    const roi = document.getElementById('roiCircle');
+    roi.setAttribute('cx', cX);
+    roi.setAttribute('cy', cY);
+    const ang = 0.05;
+    const aSx = cX + rRoi * Math.cos(ang);
+    const aSy = cY + rRoi * Math.sin(ang);
+    const ar = document.getElementById('roiArrow');
+    ar.setAttribute('x1', aSx); ar.setAttribute('y1', aSy);
+    ar.setAttribute('x2', 410); ar.setAttribute('y2', 130);
+    const rt = document.getElementById('roiText');
+    rt.setAttribute('x', cX - 78);
+    rt.setAttribute('y', 250);
+    const ZW = 240, ZH = 180;
+    const ztX = t => (t - tStar) * (ZW/dt) + 50;
+    let vLo = fn(tStar), vHi = fn(tStar);
+    for (let k = 0; k <= 40; k++) {
+      const tt = tStar + (dt*k)/40;
+      const vv = fn(tt);
+      if (vv < vLo) vLo = vv;
+      if (vv > vHi) vHi = vv;
+    }
+    const margin = 0.18 * (vHi - vLo);
+    const vMin = vLo - margin, vMax = vHi + margin;
+    const ztY = v => 200 - (v - vMin)/(vMax - vMin) * ZH;
+    document.getElementById('wave1zoom').setAttribute('d', pathFromFn(fn, tStar, tStar+dt, 80, ztX, ztY));
+    const x1 = ztX(tStar),    y1 = ztY(fn(tStar));
+    const x2 = ztX(tStar+dt), y2 = ztY(fn(tStar+dt));
+    document.getElementById('zp1').setAttribute('cx', x1);
+    document.getElementById('zp1').setAttribute('cy', y1);
+    document.getElementById('zp2').setAttribute('cx', x2);
+    document.getElementById('zp2').setAttribute('cy', y2);
+    const chord = document.getElementById('chord1');
+    chord.setAttribute('x1', x1); chord.setAttribute('y1', y1);
+    chord.setAttribute('x2', x2); chord.setAttribute('y2', y2);
+    const v1 = document.getElementById('dt_v1');
+    v1.setAttribute('x1', x1); v1.setAttribute('y1', y1);
+    v1.setAttribute('x2', x1); v1.setAttribute('y2', 200);
+    const v2 = document.getElementById('dt_v2');
+    v2.setAttribute('x1', x2); v2.setAttribute('y1', y2);
+    v2.setAttribute('x2', x2); v2.setAttribute('y2', 200);
+    const hg = document.getElementById('dt_hg');
+    hg.setAttribute('x1', x1); hg.setAttribute('y1', y1);
+    hg.setAttribute('x2', x2); hg.setAttribute('y2', y1);
+    document.getElementById('dt_brace').setAttribute('d', hBrace(x1, x2, 222, 6));
+    document.getElementById('dx_brace').setAttribute('d', vBrace(x2 + 8, y2, y1, 6));
+    document.getElementById('t_lbl').setAttribute('x', x1 - 3);
+    document.getElementById('t_lbl').setAttribute('y', 216);
+    document.getElementById('ttdt_lbl').setAttribute('x', x2 - 22);
+    document.getElementById('ttdt_lbl').setAttribute('y', 216);
+    document.getElementById('dt_lbl').setAttribute('x', (x1+x2)/2 - 8);
+    document.getElementById('dt_lbl').setAttribute('y', 248);
+    document.getElementById('xt_lbl').setAttribute('x', x1 - 36);
+    document.getElementById('xt_lbl').setAttribute('y', y1 + 4);
+    document.getElementById('xttdt_lbl').setAttribute('x', x2 - 32);
+    document.getElementById('xttdt_lbl').setAttribute('y', y2 - 10);
+    document.getElementById('dx_lbl').setAttribute('x', x2 + 26);
+    document.getElementById('dx_lbl').setAttribute('y', (y1+y2)/2 + 4);
   }
 
-  /* ══════════════════════════════════════════════════════════════════
-     Shared canvas drawing utilities
-     ══════════════════════════════════════════════════════════════════ */
-  function makeArrowHead(ctx) {
-    return function(x, y, angle, size) {
+  /* ── Piecewise-linear approximation ──────────────────────────────── */
+  {
+    const fn = t => 0.7*Math.sin(1.8*t) + 0.07*Math.pow(t,2) - 0.1*t + 0.6;
+    const t0 = 0, t1 = 6.4;
+    const W = 440, H = 160;
+    const tx = t => (t - t0) * (W/(t1-t0));
+    const ty = v => 160 - v * 32;
+    document.getElementById('refCurve').setAttribute('d', pathFromFn(fn, t0, t1, 200, tx, ty));
+    const dt = 0.8;
+    let pts = '', ticks = '';
+    const sampleTs = [];
+    for (let t = t0; t <= t1 + 1e-9; t += dt) {
+      sampleTs.push(t);
+      pts += tx(t).toFixed(2) + ',' + ty(fn(t)).toFixed(2) + ' ';
+      ticks += `<line x1="${tx(t)}" y1="160" x2="${tx(t)}" y2="168" class="tick"/>`;
+    }
+    document.getElementById('pieces').setAttribute('points', pts.trim());
+    document.getElementById('dtTicks').innerHTML = ticks;
+    const k = 2;
+    const xs = tx(sampleTs[k]), xe = tx(sampleTs[k+1]);
+    document.getElementById('dtSegBrace').setAttribute('d', hBrace(xs, xe, 174, 5));
+    document.getElementById('dtSegLbl').setAttribute('x', (xs+xe)/2 - 8);
+    document.getElementById('dtSegLbl').setAttribute('y', 200);
+  }
+
+  /* ── Tangent at a point ───────────────────────────────────────────── */
+  {
+    const fn = t => 0.18*t*t + 0.15*t;
+    const dfn = t => 0.36*t + 0.15;
+    const t0 = 0, t1 = 8;
+    const W = 360, H = 130;
+    const tx = t => (t - t0) * (W/(t1-t0));
+    const ty = v => 150 - v * 12;
+    document.getElementById('tanCurve').setAttribute('d', pathFromFn(fn, t0, t1, 100, tx, ty));
+    const tStar = 2.0;
+    const m_px  = -dfn(tStar) * 12 / (W/(t1-t0));
+    const x0px  = tx(tStar), y0px = ty(fn(tStar));
+    const dxL = 60, dxR = 220;
+    const tl  = document.getElementById('tanLine');
+    tl.setAttribute('x1', x0px - dxL);
+    tl.setAttribute('y1', y0px - m_px*dxL);
+    tl.setAttribute('x2', x0px + dxR);
+    tl.setAttribute('y2', y0px + m_px*dxR);
+    const pt = document.getElementById('tanPt');
+    pt.setAttribute('cx', x0px); pt.setAttribute('cy', y0px);
+    const tt = document.getElementById('tanTxt');
+    tt.setAttribute('x', x0px - 4); tt.setAttribute('y', 168);
+  }
+
+  /* ── Parabola (t-1)^2 - 1 ────────────────────────────────────────── */
+  {
+    const fn = t => (t-1)*(t-1) - 1;
+    const t0 = -0.7, t1 = 3.2;
+    const tx = t => t * 50;
+    const ty = v => 160 - v * 50;
+    document.getElementById('paraCurve').setAttribute('d', pathFromFn(fn, t0, t1, 100, tx, ty));
+  }
+
+  /* ── Curve with a, b and displacement bracket ───────────────────── */
+  {
+    const fn = t => 0.5*Math.sin(1.4*t) + 0.05*t*t + 0.4*t + 0.2;
+    const t0 = 0.2, t1 = 6.0;
+    const W = 360, H = 160;
+    const tx = t => (t - t0) * (W/(t1-t0));
+    const ty = v => 180 - v * 20;
+    document.getElementById('abCurve').setAttribute('d', pathFromFn(fn, t0, t1, 200, tx, ty));
+    const tA = 1.2, tB = 4.6;
+    const xA = tx(tA), yA = ty(fn(tA));
+    const xB = tx(tB), yB = ty(fn(tB));
+    document.getElementById('ptA').setAttribute('cx', xA);
+    document.getElementById('ptA').setAttribute('cy', yA);
+    document.getElementById('ptB').setAttribute('cx', xB);
+    document.getElementById('ptB').setAttribute('cy', yB);
+    const ag = document.getElementById('ag');
+    ag.setAttribute('x1', xA); ag.setAttribute('y1', yA);
+    ag.setAttribute('x2', xA); ag.setAttribute('y2', 180);
+    const bg = document.getElementById('bg');
+    bg.setAttribute('x1', xB); bg.setAttribute('y1', yB);
+    bg.setAttribute('x2', xB); bg.setAttribute('y2', 180);
+    const hg = document.getElementById('hg');
+    hg.setAttribute('x1', xA); hg.setAttribute('y1', yA);
+    hg.setAttribute('x2', xB); hg.setAttribute('y2', yA);
+    document.getElementById('aLbl').setAttribute('x', xA - 4);
+    document.getElementById('aLbl').setAttribute('y', 198);
+    document.getElementById('bLbl').setAttribute('x', xB - 4);
+    document.getElementById('bLbl').setAttribute('y', 198);
+    document.getElementById('xaLbl').setAttribute('x', xA - 32);
+    document.getElementById('xaLbl').setAttribute('y', yA - 8);
+    document.getElementById('xbLbl').setAttribute('x', xB - 32);
+    document.getElementById('xbLbl').setAttribute('y', yB - 8);
+    const bx = xB + 12;
+    const top = yB, bot = yA;
+    const mid = (top + bot)/2;
+    const brace = `M ${bx},${top} q 8,0 8,8 V ${mid-4} q 0,8 8,8 q -8,0 -8,8 V ${bot-8} q 0,8 -8,8`;
+    document.getElementById('dispBrace').setAttribute('d', brace);
+    document.getElementById('dispLbl').setAttribute('x', bx + 22);
+    document.getElementById('dispLbl').setAttribute('y', mid + 4);
+  }
+
+  /* ════════════════════════════════════════════════════════════════════
+     ANIMATION: 1D motion → x(t) curve
+     ════════════════════════════════════════════════════════════════════ */
+  (function() {
+    const canvas = document.getElementById('motionAnim');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+
+    /* Position function – same shape as original static figure */
+    const fn = t => 0.7 * Math.sin(2.5 * t) + 0.04 * t * t * t - 0.2 * t;
+
+    /* Animation period (seconds) – one full sweep of the x(t) graph */
+    const T      = 7;
+    /* Pause at end of each loop before resetting (seconds) */
+    const PAUSE  = 0.6;
+
+    /* ── Layout constants (canvas: 600 × 240) ────────────────────── */
+    // Left panel: vertical position axis
+    const LP = {
+      axX   : 62,    // canvas x of the axis line
+      top   : 16,    // axis top (canvas y)
+      bot   : 232,   // axis bottom (canvas y)
+      cenY  : 190,   // canvas y where x = 0  ← 原点を下寄りに
+      scale : 28,    // px per position unit
+    };
+    LP.toY = v => LP.cenY - v * LP.scale;
+
+    // Right panel: x(t) graph
+    const RP = {
+      ox    : 210,   // canvas x at t = 0
+      oy    : 190,   // canvas y at x = 0  ← 左パネルに合わせて下寄りに
+      maxX  : 588,   // canvas x at t = T
+      topY  : 14,    // top of x-axis
+      botY  : 232,   // bottom of x-axis
+      tScale: 0,     // computed below
+      xScale: 28,    // px per position unit (same as LP)
+    };
+    RP.tScale = (RP.maxX - RP.ox) / T;
+    RP.toX = t => RP.ox + t * RP.tScale;
+    RP.toY = v => RP.oy - v * RP.xScale;
+
+    /* ── Drawing helpers ────────────────────────────────────────── */
+    function arrowHead(ax, ay, angle, size) {
       size = size || 7;
       ctx.save();
-      ctx.fillStyle = ctx.strokeStyle;
+      ctx.fillStyle = '#222';
       ctx.beginPath();
-      ctx.moveTo(x, y);
-      ctx.lineTo(x - size*Math.cos(angle - 0.38), y - size*Math.sin(angle - 0.38));
-      ctx.lineTo(x - size*Math.cos(angle + 0.38), y - size*Math.sin(angle + 0.38));
+      ctx.moveTo(ax, ay);
+      ctx.lineTo(ax - size * Math.cos(angle - 0.38), ay - size * Math.sin(angle - 0.38));
+      ctx.lineTo(ax - size * Math.cos(angle + 0.38), ay - size * Math.sin(angle + 0.38));
       ctx.closePath();
       ctx.fill();
       ctx.restore();
-    };
-  }
-
-  function drawGround(ctx, x0, x1, y) {
-    ctx.strokeStyle = '#444'; ctx.lineWidth = 1.5;
-    ctx.beginPath(); ctx.moveTo(x0, y); ctx.lineTo(x1, y); ctx.stroke();
-    ctx.lineWidth = 0.9;
-    for (let x = x0 + 7; x <= x1 - 2; x += 12) {
-      ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x - 7, y + 9); ctx.stroke();
     }
-  }
 
-  /* ══════════════════════════════════════════════════════════════════
-     EXAMPLE 1 ANIMATION: Free fall  x(t) = h − ½g t²
-     Canvas: 540 × 250
-     ══════════════════════════════════════════════════════════════════ */
-  (function() {
-    const canvas = document.getElementById('ex1Canvas');
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    const ah = makeArrowHead(ctx);
+    function drawLeftPanel(tNow) {
+      const v = fn(tNow);
+      const dotY = LP.toY(v);
 
-    const G = 9.8, H = 5.0;
-    const tStar = Math.sqrt(2 * H / G);   // physics fall time ≈ 1.01 s
-    const fn = t => H - 0.5 * G * t * t;  // x(t)
-
-    const SPEED = 0.4;                     // physics s per animation s
-    const PAUSE = 1.4;                     // pause at end before loop
-    const T_CYCLE = tStar / SPEED + PAUSE;
-
-    /* ── Left panel layout ──────────────────────────────────────── */
-    // Scale: 170px for H, so x=H → y=52, leaving 30px above for "x" label
-    const LP1 = {
-      axX  : 38,    // vertical axis canvas-x
-      botY : 222,   // canvas-y at x=0 (ground)
-      topY : 22,    // canvas-y of axis arrowhead
-      ballX: 85,    // ball horizontal position
-      xToY : v => 222 - v * (170 / H)
-    };
-
-    /* ── Right panel layout ─────────────────────────────────────── */
-    const RP1 = {
-      ox   : 268,   // canvas-x at t=0
-      oy   : 222,   // canvas-y at x=0
-      maxX : 532,   // canvas-x at t = tStar*1.10
-      topY : 22,    // canvas-y of axis arrowhead
-      tToX : t => 268 + t * (264 / (tStar * 1.10)),
-      xToY : v => 222 - v * (170 / H)
-    };
-
-    let start1 = null;
-
-    function drawEx1(ts) {
-      if (!start1) start1 = ts;
-      const elapsed = (ts - start1) / 1000;
-      const cycle   = elapsed % T_CYCLE;
-      const tPhys   = Math.min(cycle * SPEED, tStar);
-      const xVal    = Math.max(0, fn(tPhys));
-      const vel     = -G * tPhys;
-
-      ctx.clearRect(0, 0, 540, 250);
-
-      /* ── Left: physical space ─────────────────────────────────── */
-      // Vertical axis
-      ctx.strokeStyle = '#222'; ctx.fillStyle = '#222'; ctx.lineWidth = 1.4;
-      ctx.beginPath();
-      ctx.moveTo(LP1.axX, LP1.botY);
-      ctx.lineTo(LP1.axX, LP1.topY + 8);
-      ctx.stroke();
-      ah(LP1.axX, LP1.topY + 8, -Math.PI / 2);
-
-      // x label
-      ctx.font = 'italic 15px Cambria, "Times New Roman", serif';
-      ctx.fillStyle = '#1a1a1a'; ctx.textAlign = 'center';
-      ctx.fillText('x', LP1.axX, LP1.topY + 4);
-
-      // Ground
-      drawGround(ctx, LP1.axX - 14, 185, LP1.botY);
-      ctx.font = 'italic 12px Cambria, "Times New Roman", serif';
-      ctx.fillStyle = '#555'; ctx.textAlign = 'center';
-      ctx.fillText('0', LP1.axX, LP1.botY + 15);
-
-      // Height h: tick on axis + dashed guide to ball + label
-      const hY = LP1.xToY(H);
-      // dashed guide from axis to ball column
+      /* Axis line */
       ctx.save();
-      ctx.strokeStyle = '#aaa'; ctx.lineWidth = 1; ctx.setLineDash([4, 3]);
+      ctx.strokeStyle = '#222';
+      ctx.lineWidth = 1.4;
       ctx.beginPath();
-      ctx.moveTo(LP1.axX + 4, hY);
-      ctx.lineTo(LP1.ballX - 14, hY);
+      ctx.moveTo(LP.axX, LP.bot);
+      ctx.lineTo(LP.axX, LP.top + 10);
+      ctx.stroke();
+      arrowHead(LP.axX, LP.top + 10, -Math.PI / 2);
+
+      /* Zero tick */
+      ctx.strokeStyle = '#999';
+      ctx.lineWidth = 0.8;
+      ctx.beginPath();
+      ctx.moveTo(LP.axX - 4, LP.cenY);
+      ctx.lineTo(LP.axX + 4, LP.cenY);
+      ctx.stroke();
+
+      /* x label */
+      ctx.font = 'italic 15px Cambria, "Times New Roman", serif';
+      ctx.fillStyle = '#1a1a1a';
+      ctx.textAlign = 'center';
+      ctx.fillText('x', LP.axX, LP.top + 4);
+
+      /* Ghost trail – last 1.4 s of positions */
+      const TRAIL_SEC  = 1.4;
+      const TRAIL_STEP = 60;
+      for (let i = TRAIL_STEP; i >= 1; i--) {
+        const tPast = tNow - i * TRAIL_SEC / TRAIL_STEP;
+        if (tPast < 0) continue;
+        const yPast = LP.toY(fn(tPast));
+        const alpha = Math.pow((TRAIL_STEP - i) / TRAIL_STEP, 1.5) * 0.35;
+        ctx.beginPath();
+        ctx.arc(LP.axX, yPast, 3.2, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(192,57,43,${alpha.toFixed(3)})`;
+        ctx.fill();
+      }
+
+      /* Current dot with glow */
+      ctx.beginPath();
+      ctx.arc(LP.axX, dotY, 7, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(192,57,43,0.18)';
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(LP.axX, dotY, 5, 0, Math.PI * 2);
+      ctx.fillStyle = '#c0392b';
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    function drawMiddleArrow() {
+      ctx.save();
+      ctx.strokeStyle = '#444';
+      ctx.fillStyle   = '#444';
+      ctx.lineWidth   = 1.5;
+      const x1 = 86, x2 = 200, y = 120;
+      ctx.beginPath();
+      ctx.moveTo(x1, y);
+      ctx.lineTo(x2 - 9, y);
+      ctx.stroke();
+      arrowHead(x2 - 2, y, 0, 7);
+
+      ctx.font = '12px Georgia, serif';
+      ctx.fillStyle   = '#333';
+      ctx.textAlign   = 'center';
+      ctx.fillText('unfold along time', (x1 + x2) / 2, y - 9);
+      ctx.restore();
+    }
+
+    function drawRightPanel(tNow) {
+      ctx.save();
+      /* Clip to right panel */
+      ctx.beginPath();
+      ctx.rect(RP.ox - 1, 5, canvas.width - RP.ox + 1, canvas.height - 10);
+      ctx.clip();
+
+      /* t-axis */
+      ctx.strokeStyle = '#222';
+      ctx.fillStyle   = '#222';
+      ctx.lineWidth   = 1.4;
+      ctx.beginPath();
+      ctx.moveTo(RP.ox, RP.oy);
+      ctx.lineTo(RP.maxX - 9, RP.oy);
+      ctx.stroke();
+      arrowHead(RP.maxX - 2, RP.oy, 0);
+
+      /* x-axis */
+      ctx.beginPath();
+      ctx.moveTo(RP.ox, RP.botY);
+      ctx.lineTo(RP.ox, RP.topY + 10);
+      ctx.stroke();
+      arrowHead(RP.ox, RP.topY + 10, -Math.PI / 2);
+
+      /* Traced curve up to tNow */
+      if (tNow > 0.005) {
+        const STEPS = 320;
+        const nDraw = Math.ceil(tNow / T * STEPS);
+        ctx.beginPath();
+        for (let i = 0; i <= nDraw; i++) {
+          const ti = tNow * i / nDraw;
+          const px = RP.toX(ti);
+          const py = RP.toY(fn(ti));
+          i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+        }
+        ctx.strokeStyle = '#1f4e8a';
+        ctx.lineWidth   = 2.3;
+        ctx.stroke();
+      }
+
+      /* Dashed guide lines from current point to axes */
+      const cx = RP.toX(tNow);
+      const cy = RP.toY(fn(tNow));
+      ctx.setLineDash([4, 3]);
+      ctx.strokeStyle = '#aaa';
+      ctx.lineWidth   = 1;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(cx, RP.oy);      /* drop to t-axis */
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(RP.ox, cy);      /* left to x-axis */
       ctx.stroke();
       ctx.setLineDash([]);
+
+      /* Current dot on the graph with glow */
+      ctx.beginPath();
+      ctx.arc(cx, cy, 6.5, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(192,57,43,0.18)';
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(cx, cy, 4.5, 0, Math.PI * 2);
+      ctx.fillStyle = '#c0392b';
+      ctx.fill();
+
       ctx.restore();
-      // tick on axis
-      ctx.strokeStyle = '#444'; ctx.lineWidth = 1.1;
-      ctx.beginPath();
-      ctx.moveTo(LP1.axX - 5, hY);
-      ctx.lineTo(LP1.axX + 5, hY);
-      ctx.stroke();
-      // label
-      ctx.font = 'italic 13px Cambria, "Times New Roman", serif';
-      ctx.fillStyle = '#1a1a1a'; ctx.textAlign = 'right';
-      ctx.fillText('h', LP1.axX - 8, hY + 4);
 
-      // Velocity arrow (red, downward, grows with speed)
-      const ballY = LP1.xToY(xVal);
-      if (tPhys > 0.01) {
-        const arrowLen = Math.min(Math.abs(vel) * 11, LP1.botY - ballY - 16);
-        if (arrowLen > 4) {
-          ctx.save();
-          ctx.strokeStyle = '#c0392b'; ctx.fillStyle = '#c0392b';
-          ctx.lineWidth = 1.7; ctx.setLineDash([3, 3]);
-          ctx.beginPath();
-          ctx.moveTo(LP1.ballX, ballY + 12);
-          ctx.lineTo(LP1.ballX, ballY + 12 + arrowLen - 8);
-          ctx.stroke();
-          ctx.setLineDash([]);
-          ah(LP1.ballX, ballY + 12 + arrowLen, Math.PI / 2, 7);
-          ctx.restore();
-        }
-      }
-
-      // Initial label (shown at t≈0)
-      if (tPhys < tStar * 0.15) {
-        const alpha = Math.max(0, 1 - tPhys / (tStar * 0.15));
-        ctx.font = `italic 10.5px Cambria, "Times New Roman", serif`;
-        ctx.fillStyle = `rgba(80,80,80,${alpha.toFixed(2)})`;
-        ctx.textAlign = 'left';
-        ctx.fillText('t = 0', LP1.ballX + 14, ballY - 8);
-        ctx.fillText('v(0)=0,  x(0)=h', LP1.ballX + 14, ballY + 6);
-      }
-
-      // Ball
-      ctx.beginPath();
-      ctx.arc(LP1.ballX, ballY, 9.5, 0, Math.PI * 2);
-      ctx.fillStyle = '#333'; ctx.fill();
-
-      /* ── Right: x(t) graph ────────────────────────────────────── */
-      // Axes
-      ctx.strokeStyle = '#222'; ctx.fillStyle = '#222'; ctx.lineWidth = 1.4;
-      ctx.beginPath();
-      ctx.moveTo(RP1.ox, RP1.oy);
-      ctx.lineTo(RP1.maxX - 8, RP1.oy);
-      ctx.stroke();
-      ah(RP1.maxX - 1, RP1.oy, 0);
-      ctx.beginPath();
-      ctx.moveTo(RP1.ox, RP1.oy + 14);
-      ctx.lineTo(RP1.ox, RP1.topY + 8);
-      ctx.stroke();
-      ah(RP1.ox, RP1.topY + 1, -Math.PI / 2);
-
-      // Axis labels (outside clip so always visible)
+      /* Axis labels — drawn AFTER restore() so they are not clipped */
       ctx.font = 'italic 15px Cambria, "Times New Roman", serif';
       ctx.fillStyle = '#1a1a1a';
       ctx.textAlign = 'left';
-      ctx.fillText('t', RP1.maxX + 2, RP1.oy + 5);
+      ctx.fillText('t', RP.maxX + 2, RP.oy + 5);   /* right of t-axis arrow */
       ctx.textAlign = 'right';
-      ctx.fillText('x', RP1.ox - 5, RP1.topY + 13);
-
-      // h tick mark on x(vertical)-axis + label
-      const p0y = RP1.xToY(H);
-      // small horizontal tick on the axis
-      ctx.strokeStyle = '#444'; ctx.lineWidth = 1.1;
-      ctx.beginPath();
-      ctx.moveTo(RP1.ox - 5, p0y);
-      ctx.lineTo(RP1.ox + 5, p0y);
-      ctx.stroke();
-      ctx.font = 'italic 13px Cambria, "Times New Roman", serif';
-      ctx.fillStyle = '#1a1a1a'; ctx.textAlign = 'right';
-      ctx.fillText('h', RP1.ox - 8, p0y + 4);
-
-      // Starting point dot
-      ctx.beginPath();
-      ctx.arc(RP1.tToX(0), p0y, 3.5, 0, Math.PI * 2);
-      ctx.fillStyle = '#c0392b'; ctx.fill();
-
-      // Curve traced so far
-      ctx.save();
-      ctx.beginPath();
-      ctx.rect(RP1.ox, RP1.topY - 6, 540 - RP1.ox + 8, RP1.oy - RP1.topY + 6 + 15);
-      ctx.clip();
-      if (tPhys > 0.01) {
-        const STEPS = 160;
-        const nDraw = Math.ceil(tPhys / tStar * STEPS);
-        ctx.beginPath();
-        for (let i = 0; i <= nDraw; i++) {
-          const ti = tPhys * i / nDraw;
-          const px = RP1.tToX(ti), py = RP1.xToY(fn(ti));
-          i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
-        }
-        ctx.strokeStyle = '#1f4e8a'; ctx.lineWidth = 2.3;
-        ctx.stroke();
-      }
-      ctx.restore();
-
-      // Guide lines + current dot
-      if (tPhys > 0.01) {
-        const cx = RP1.tToX(tPhys), cy = RP1.xToY(xVal);
-        ctx.save();
-        ctx.strokeStyle = '#bbb'; ctx.lineWidth = 1; ctx.setLineDash([4, 3]);
-        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx, RP1.oy); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(RP1.ox, cy); ctx.stroke();
-        ctx.setLineDash([]);
-        ctx.restore();
-        ctx.beginPath();
-        ctx.arc(cx, cy, 5, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(192,57,43,0.2)'; ctx.fill();
-        ctx.beginPath();
-        ctx.arc(cx, cy, 3.5, 0, Math.PI * 2);
-        ctx.fillStyle = '#c0392b'; ctx.fill();
-      }
-
-      // End label: t* = √(2h/g)
-      if (tPhys >= tStar * 0.92) {
-        const alpha = Math.min(1, (tPhys - tStar * 0.88) / (tStar * 0.14));
-        const lx = RP1.tToX(tStar), ly = RP1.oy;
-        ctx.beginPath();
-        ctx.arc(lx, ly, 3.5, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(192,57,43,${alpha.toFixed(2)})`; ctx.fill();
-        ctx.font = `italic 11px Cambria, "Times New Roman", serif`;
-        ctx.fillStyle = `rgba(60,60,60,${alpha.toFixed(2)})`;
-        ctx.textAlign = 'center';
-        ctx.fillText('t* = √(2h/g)', lx, ly + 18);
-      }
-
-      requestAnimationFrame(drawEx1);
+      ctx.fillText('x', RP.ox - 6, RP.topY + 16);  /* above x-axis arrow */
     }
 
-    requestAnimationFrame(drawEx1);
-  })();
+    /* ── Animation loop ──────────────────────────────────────────── */
+    let startTime = null;
 
+    function frame(ts) {
+      if (!startTime) startTime = ts;
+      const elapsed = (ts - startTime) / 1000;
 
-  /* ══════════════════════════════════════════════════════════════════
-     EXAMPLE 2 ANIMATION: Throw upward  x(t) = v₀t − ½g t²
-     Canvas: 540 × 250
-     ══════════════════════════════════════════════════════════════════ */
-  (function() {
-    const canvas = document.getElementById('ex2Canvas');
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    const ah = makeArrowHead(ctx);
+      /* Effective time within one cycle (including end-pause) */
+      const cycle   = elapsed % (T + PAUSE);
+      const tNow    = Math.min(cycle, T);  /* clamp during pause */
 
-    const G = 9.8, V0 = 10.0;
-    const tTop    = V0 / G;             // peak time ≈ 1.02 s
-    const tReturn = 2 * V0 / G;         // return time ≈ 2.04 s
-    const xMax    = V0 * V0 / (2 * G); // max height ≈ 5.10 m
-    const fn = t => V0 * t - 0.5 * G * t * t;  // x(t)
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    const SPEED = 0.38;                  // physics s per animation s
-    const PAUSE = 1.5;
-    const T_CYCLE = tReturn / SPEED + PAUSE;
+      drawLeftPanel(tNow);
+      drawMiddleArrow();
+      drawRightPanel(tNow);
 
-    /* ── Left panel layout ──────────────────────────────────────── */
-    const LP2 = {
-      axX  : 38,
-      botY : 222,
-      topY : 22,
-      ballX: 85,
-      xToY : v => 222 - v * (170 / xMax)
-    };
-
-    /* ── Right panel layout ─────────────────────────────────────── */
-    const RP2 = {
-      ox   : 268,
-      oy   : 222,
-      maxX : 532,
-      topY : 22,
-      tToX : t => 268 + t * (264 / (tReturn * 1.10)),
-      xToY : v => 222 - v * (170 / xMax)
-    };
-
-    let start2 = null;
-
-    function drawEx2(ts) {
-      if (!start2) start2 = ts;
-      const elapsed = (ts - start2) / 1000;
-      const cycle   = elapsed % T_CYCLE;
-      const tPhys   = Math.min(cycle * SPEED, tReturn);
-      const xVal    = Math.max(0, fn(tPhys));
-      const vel     = V0 - G * tPhys;   // positive = up, negative = down
-
-      ctx.clearRect(0, 0, 540, 250);
-
-      /* ── Left: physical space ─────────────────────────────────── */
-      // Vertical axis
-      ctx.strokeStyle = '#222'; ctx.fillStyle = '#222'; ctx.lineWidth = 1.4;
-      ctx.beginPath();
-      ctx.moveTo(LP2.axX, LP2.botY);
-      ctx.lineTo(LP2.axX, LP2.topY + 8);
-      ctx.stroke();
-      ah(LP2.axX, LP2.topY + 8, -Math.PI / 2);
-
-      ctx.font = 'italic 15px Cambria, "Times New Roman", serif';
-      ctx.fillStyle = '#1a1a1a'; ctx.textAlign = 'center';
-      ctx.fillText('x', LP2.axX, LP2.topY + 4);
-
-      // Ground
-      drawGround(ctx, LP2.axX - 14, 185, LP2.botY);
-      ctx.font = 'italic 12px Cambria, "Times New Roman", serif';
-      ctx.fillStyle = '#555'; ctx.textAlign = 'center';
-      ctx.fillText('0', LP2.axX, LP2.botY + 15);
-
-      // Ball position
-      const ballY = LP2.xToY(xVal);
-
-      // Velocity arrow
-      const velScale = 9.5;
-      const arrowLen = Math.abs(vel) * velScale;
-      if (arrowLen > 3) {
-        const goingUp = vel > 0;
-        const color   = goingUp ? '#2a8a3e' : '#c0392b';
-        const angle   = goingUp ? -Math.PI / 2 : Math.PI / 2;
-        const tipY    = goingUp
-          ? Math.max(LP2.topY + 8, ballY - arrowLen)
-          : Math.min(LP2.botY - 4, ballY + arrowLen);
-        const baseY   = goingUp ? ballY - 12 : ballY + 12;
-
-        ctx.save();
-        ctx.strokeStyle = color; ctx.fillStyle = color;
-        ctx.lineWidth = 1.7; ctx.setLineDash([3, 3]);
-        ctx.beginPath();
-        ctx.moveTo(LP2.ballX, baseY);
-        ctx.lineTo(LP2.ballX, tipY + (goingUp ? 8 : -8));
-        ctx.stroke();
-        ctx.setLineDash([]);
-        ah(LP2.ballX, tipY, angle, 7);
-
-        // v₀ label near the arrow (only on first upswing)
-        if (goingUp && tPhys < tTop * 0.5) {
-          ctx.font = 'italic 11px Cambria, "Times New Roman", serif';
-          ctx.fillStyle = color; ctx.textAlign = 'left';
-          ctx.fillText('v₀', LP2.ballX + 8, (baseY + tipY) / 2 + 4);
-        }
-        ctx.restore();
-      }
-
-      // Initial label (fade out)
-      if (tPhys < tReturn * 0.12) {
-        const alpha = Math.max(0, 1 - tPhys / (tReturn * 0.12));
-        ctx.font = `italic 10.5px Cambria, "Times New Roman", serif`;
-        ctx.fillStyle = `rgba(80,80,80,${alpha.toFixed(2)})`;
-        ctx.textAlign = 'left';
-        ctx.fillText('t = 0', LP2.ballX + 14, LP2.botY - 16);
-        ctx.fillText('x(0)=0,  v(0)=v₀', LP2.ballX + 14, LP2.botY - 4);
-      }
-
-      // Ball
-      ctx.beginPath();
-      ctx.arc(LP2.ballX, ballY, 9.5, 0, Math.PI * 2);
-      ctx.fillStyle = '#333'; ctx.fill();
-
-      /* ── Right: x(t) graph ────────────────────────────────────── */
-      // Axes
-      ctx.strokeStyle = '#222'; ctx.fillStyle = '#222'; ctx.lineWidth = 1.4;
-      ctx.beginPath();
-      ctx.moveTo(RP2.ox, RP2.oy);
-      ctx.lineTo(RP2.maxX - 8, RP2.oy);
-      ctx.stroke();
-      ah(RP2.maxX - 1, RP2.oy, 0);
-      ctx.beginPath();
-      ctx.moveTo(RP2.ox, RP2.oy + 14);
-      ctx.lineTo(RP2.ox, RP2.topY + 8);
-      ctx.stroke();
-      ah(RP2.ox, RP2.topY + 1, -Math.PI / 2);
-
-      // Labels (after clip so always visible)
-      ctx.font = 'italic 15px Cambria, "Times New Roman", serif';
-      ctx.fillStyle = '#1a1a1a';
-      ctx.textAlign = 'left';
-      ctx.fillText('t', RP2.maxX + 2, RP2.oy + 5);
-      ctx.textAlign = 'right';
-      ctx.fillText('x', RP2.ox - 5, RP2.topY + 13);
-
-      // Curve traced so far
-      ctx.save();
-      ctx.beginPath();
-      ctx.rect(RP2.ox, RP2.topY - 6, 540 - RP2.ox + 8, RP2.oy - RP2.topY + 6 + 15);
-      ctx.clip();
-      if (tPhys > 0.01) {
-        const STEPS = 200;
-        const nDraw = Math.ceil(tPhys / tReturn * STEPS);
-        ctx.beginPath();
-        for (let i = 0; i <= nDraw; i++) {
-          const ti = tPhys * i / nDraw;
-          const px = RP2.tToX(ti), py = RP2.xToY(Math.max(0, fn(ti)));
-          i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
-        }
-        ctx.strokeStyle = '#1f4e8a'; ctx.lineWidth = 2.3;
-        ctx.stroke();
-      }
-      ctx.restore();
-
-      // Guide + current dot
-      if (tPhys > 0.01) {
-        const cx = RP2.tToX(tPhys), cy = RP2.xToY(xVal);
-        ctx.save();
-        ctx.strokeStyle = '#bbb'; ctx.lineWidth = 1; ctx.setLineDash([4, 3]);
-        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx, RP2.oy); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(RP2.ox, cy); ctx.stroke();
-        ctx.setLineDash([]);
-        ctx.restore();
-        ctx.beginPath();
-        ctx.arc(cx, cy, 5, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(192,57,43,0.2)'; ctx.fill();
-        ctx.beginPath();
-        ctx.arc(cx, cy, 3.5, 0, Math.PI * 2);
-        ctx.fillStyle = '#c0392b'; ctx.fill();
-      }
-
-      // Peak marker: appears when ball is near/past the top
-      if (tPhys >= tTop * 0.9) {
-        const alpha = Math.min(1, (tPhys - tTop * 0.85) / (tTop * 0.18));
-        const pkx = RP2.tToX(tTop), pky = RP2.xToY(xMax);
-        // dashed guides to peak
-        ctx.save();
-        ctx.strokeStyle = `rgba(136,136,136,${(alpha * 0.7).toFixed(2)})`;
-        ctx.lineWidth = 1; ctx.setLineDash([4, 3]);
-        ctx.beginPath(); ctx.moveTo(pkx, pky); ctx.lineTo(pkx, RP2.oy); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(pkx, pky); ctx.lineTo(RP2.ox, pky); ctx.stroke();
-        ctx.setLineDash([]);
-        ctx.restore();
-        ctx.beginPath();
-        ctx.arc(pkx, pky, 3.5, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(192,57,43,${alpha.toFixed(2)})`; ctx.fill();
-        // tick on y-axis at peak height
-        ctx.strokeStyle = `rgba(68,68,68,${alpha.toFixed(2)})`; ctx.lineWidth = 1.1;
-        ctx.beginPath();
-        ctx.moveTo(RP2.ox - 5, pky); ctx.lineTo(RP2.ox + 5, pky); ctx.stroke();
-        ctx.font = `italic 11px Cambria, "Times New Roman", serif`;
-        ctx.fillStyle = `rgba(60,60,60,${alpha.toFixed(2)})`;
-        ctx.textAlign = 'right';
-        ctx.fillText('v₀²/(2g)', RP2.ox - 8, pky + 4);
-        ctx.textAlign = 'center';
-        ctx.fillText('v₀/g', pkx, RP2.oy + 17);
-      }
-
-      // Return to ground label
-      if (tPhys >= tReturn * 0.92) {
-        const alpha = Math.min(1, (tPhys - tReturn * 0.88) / (tReturn * 0.09));
-        const rx = RP2.tToX(tReturn), ry = RP2.oy;
-        ctx.beginPath();
-        ctx.arc(rx, ry, 3.5, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(192,57,43,${alpha.toFixed(2)})`; ctx.fill();
-        ctx.font = `italic 11px Cambria, "Times New Roman", serif`;
-        ctx.fillStyle = `rgba(60,60,60,${alpha.toFixed(2)})`;
-        ctx.textAlign = 'center';
-        ctx.fillText('2v₀/g', rx, ry + 18);
-      }
-
-      requestAnimationFrame(drawEx2);
+      requestAnimationFrame(frame);
     }
 
-    requestAnimationFrame(drawEx2);
+    requestAnimationFrame(frame);
   })();
 
 })();
